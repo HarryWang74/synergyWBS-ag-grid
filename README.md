@@ -1,4 +1,4 @@
-# [https://harry74-tailwind-testing.netlify.app/](https://synergywbs-ag-grid.netlify.app/one-table)
+# https://synergywbs-ag-grid.netlify.app/
 
 # React + TypeScript + Vite + Tailwind + AG-GRID
 
