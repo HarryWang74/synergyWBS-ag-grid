@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+h1{ @apply text-3xl}
+h2{ @apply text-2xl}
+h3{ @apply text-xl}
+h4{ @apply text-lg}
+
+@theme{
+  --color-i-primary: var(--color-blue-700);
+  --color-i-secondary: var(--color-blue-100);
+  --color-i-border-color: #7d7d7d;
+  --color-i-hover-color: #f6f6f6;
+  --bg-i-hover-color: var(--color-i-hover-color)
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* h2, h3, h4{  margin-bottom: 0.5rem; } */
+
+@layer base {
+/*   h1, h2, h3, h4 {
+    @apply mb-8 text-4xl font-bold  md:text-5xl;
+  } */
+}
+
