@@ -7,7 +7,7 @@ const Layout = () => {
       <div className="">
         <Navbar />
       </div>
-      <div>
+      <div className="h-[calc(100vh-200px)] overflow-auto">
         <Outlet />
       </div>
     </div>

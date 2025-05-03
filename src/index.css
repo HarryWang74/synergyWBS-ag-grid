@@ -13,13 +13,19 @@ h4{ @apply text-lg}
   --bg-i-hover-color: var(--color-i-hover-color)
 }
 
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* h2, h3, h4{  margin-bottom: 0.5rem; } */
-
 @layer base {
 /*   h1, h2, h3, h4 {
     @apply mb-8 text-4xl font-bold  md:text-5xl;
   } */
+}
+
+:root,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 }
 
