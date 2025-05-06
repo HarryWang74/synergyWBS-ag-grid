@@ -14,16 +14,16 @@ const Navbar = () => {
             ' inline-block p-4 hover:bg-i-hover-color'
           }
         >
-          Multi Table Solution
+          One Table Solution
         </NavLink>
         <NavLink
-          to="/one-table"
+          to="/multi-table"
           className={({ isActive }) =>
             (isActive ? 'text-i-primary' : '') +
             ' inline-block p-4 hover:bg-i-hover-color'
           }
         >
-          One Table Solution
+          Multi Table Solution
         </NavLink>
       </div>
     </div>

@@ -75,6 +75,38 @@ const OneTableSolution: FunctionComponent<Props> = ({
         values: status,
       },
     },
+    {
+      headerName: 'Start Date',
+      field: 'startDate',
+      editable: false,
+      valueFormatter: (params: ValueFormatterParams<any, Date>) => {
+        if (!params.value) {
+          return ''
+        }
+        const month = params.value.getMonth() + 1
+        const day = params.value.getDate()
+        return `${params.value.getFullYear()}-${
+          month < 10 ? '0' + month : month
+        }-${day < 10 ? '0' + day : day}`
+      },
+      cellEditor: 'agDateCellEditor',
+    },
+    {
+      headerName: 'End Date',
+      field: 'endDate',
+      editable: true,
+      valueFormatter: (params: ValueFormatterParams<any, Date>) => {
+        if (!params.value) {
+          return ''
+        }
+        const month = params.value.getMonth() + 1
+        const day = params.value.getDate()
+        return `${params.value.getFullYear()}-${
+          month < 10 ? '0' + month : month
+        }-${day < 10 ? '0' + day : day}`
+      },
+      cellEditor: 'agDateCellEditor',
+    },
   ])
   const [rowData] = useState(getData())
   const getDataPath = useCallback<GetDataPath>((data) => data.orgHierarchy, [])
