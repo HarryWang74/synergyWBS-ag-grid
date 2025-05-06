@@ -12,6 +12,14 @@ export function getData() {
       status: 'Active',
       startDate: new Date(),
       endDate: new Date(),
+      assigned: 'Staff A',
+      discipline: 'Discipline A',
+      units: 20,
+      rate: 200,
+      budget: 2000000,
+      fee: 1000,
+      used: 'CUS',
+      notes: 2,
     },
     {
       orgHierarchy: ['1', '1.1', '1.1.1'],
@@ -19,6 +27,8 @@ export function getData() {
       status: 'Completed',
       startDate: new Date(),
       endDate: new Date(),
+      assigned: 'Staff A',
+      notes: 2,
     },
     {
       orgHierarchy: ['1', '1.1', '1.1.2'],
@@ -26,6 +36,8 @@ export function getData() {
       status: 'Pending',
       startDate: new Date(),
       endDate: new Date(),
+      assigned: 'Staff A',
+      notes: 2,
     },
   ]
 }

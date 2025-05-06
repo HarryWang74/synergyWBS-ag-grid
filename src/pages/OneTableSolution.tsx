@@ -79,6 +79,7 @@ const OneTableSolution: FunctionComponent<Props> = ({
       headerName: 'Start Date',
       field: 'startDate',
       editable: false,
+      width: 150,
       valueFormatter: (params: ValueFormatterParams<any, Date>) => {
         if (!params.value) {
           return ''
@@ -95,6 +96,7 @@ const OneTableSolution: FunctionComponent<Props> = ({
       headerName: 'End Date',
       field: 'endDate',
       editable: true,
+      width: 150,
       valueFormatter: (params: ValueFormatterParams<any, Date>) => {
         if (!params.value) {
           return ''
@@ -106,6 +108,56 @@ const OneTableSolution: FunctionComponent<Props> = ({
         }-${day < 10 ? '0' + day : day}`
       },
       cellEditor: 'agDateCellEditor',
+    },
+    {
+      headerName: 'Assigned',
+      width: 150,
+      field: 'assigned',
+    },
+    {
+      headerName: 'Discipline',
+      width: 150,
+      field: 'discipline',
+    },
+    {
+      headerName: 'Units',
+      field: 'units',
+      width: 100,
+      editable: true,
+    },
+    {
+      headerName: 'Rate',
+      field: 'rate',
+      valueFormatter: ({ value }: ValueFormatterParams) =>
+        value == null ? '' : `$${Math.round(value).toLocaleString()}`,
+      width: 100,
+      editable: true,
+    },
+    {
+      headerName: 'Budget',
+      field: 'budget',
+      valueFormatter: ({ value }: ValueFormatterParams) =>
+        value == null ? '' : `$${Math.round(value).toLocaleString()}`,
+      width: 200,
+      editable: true,
+    },
+    {
+      headerName: 'Fee/Cap',
+      field: 'fee',
+      valueFormatter: ({ value }: ValueFormatterParams) =>
+        value == null ? '' : `$${Math.round(value).toLocaleString()}`,
+      width: 150,
+      editable: true,
+    },
+    {
+      headerName: 'Used',
+      width: 100,
+      field: 'used',
+    },
+    {
+      headerName: 'Notes',
+      width: 100,
+      field: 'notes',
     },
   ])
   const [rowData] = useState(getData())
