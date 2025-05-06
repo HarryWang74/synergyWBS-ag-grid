@@ -116,7 +116,7 @@
 
 .grid {
   height: calc(
-    80vh - var(--layout-grid-header-height) - var(--layout-grid-margin)
+    70vh - var(--layout-grid-header-height) - var(--layout-grid-margin)
   );
   margin: var(--layout-grid-margin);
 }

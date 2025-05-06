@@ -1,7 +1,6 @@
 import type {
   ColDef,
   GetDataPath,
-  ValueFormatterFunc,
   ValueFormatterParams,
 } from 'ag-grid-community'
 import {
@@ -31,6 +30,7 @@ import {
 
 import styles from '../HRExample.module.css'
 import { StatusCellRenderer } from '../components/cell-renderers/StatusCellRenderer'
+import { EditCellRenderer } from '../components/cell-renderers/EditCellRenderer'
 import { getData } from '../data/one-table-data'
 
 ModuleRegistry.registerModules([
@@ -158,6 +158,12 @@ const OneTableSolution: FunctionComponent<Props> = ({
       headerName: 'Notes',
       width: 100,
       field: 'notes',
+    },
+    {
+      field: '',
+      pinned: 'right',
+      cellRenderer: EditCellRenderer,
+      width: 50,
     },
   ])
   const [rowData] = useState(getData())
