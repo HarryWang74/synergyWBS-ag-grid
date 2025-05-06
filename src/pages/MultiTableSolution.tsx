@@ -31,6 +31,8 @@ import {
 } from 'react'
 
 import styles from '../InventoryExample.module.css'
+import { StatusCellRenderer } from '../components/cell-renderers/StatusCellRenderer'
+import { EditCellRenderer } from '../components/cell-renderers/EditCellRenderer'
 import { getData } from '../data/multi-table-data'
 
 ModuleRegistry.registerModules([
@@ -46,7 +48,7 @@ interface Props {
   gridTheme?: string
   isDarkMode?: boolean
 }
-
+const status = ['Active', 'Completed', 'Pending']
 const paginationPageSizeSelector = [5, 10, 20]
 
 const MultiTableSolution: FunctionComponent<Props> = ({
@@ -56,48 +58,11 @@ const MultiTableSolution: FunctionComponent<Props> = ({
   const gridRef = useRef<AgGridReact>(null)
 
   const [colDefs] = useState<ColDef[]>([
-    { field: 'a1', cellRenderer: 'agGroupCellRenderer' },
-    { field: 'b1' },
+    { field: 'wbs', cellRenderer: 'agGroupCellRenderer' },
+    { field: 'name' },
   ])
   const [rowData] = useState(getData())
-  /* const [rowData, setRowData] = useState<any[]>([
-    {
-      a1: 'level 1 - 111',
-      b1: 'level 1 - 222',
-      children: [
-        {
-          a2: 'level 2 - 333',
-          b2: 'level 2 - 444',
-          children: [
-            { a3: 'level 3 - 5551', b3: 'level 3 - 6661' },
-            { a3: 'level 3 - 5552', b3: 'level 3 - 6662' },
-            { a3: 'level 3 - 5553', b3: 'level 3 - 6663' },
-            { a3: 'level 3 - 5554', b3: 'level 3 - 6664' },
-            { a3: 'level 3 - 5555', b3: 'level 3 - 6665' },
-            { a3: 'level 3 - 5556', b3: 'level 3 - 6666' },
-          ],
-        },
-      ],
-    },
-    {
-      a1: 'level 1 - 111',
-      b1: 'level 1 - 222',
-      children: [
-        {
-          a2: 'level 2 - 333',
-          b2: 'level 2 - 444',
-          children: [
-            { a3: 'level 3 - 5551', b3: 'level 3 - 6661' },
-            { a3: 'level 3 - 5552', b3: 'level 3 - 6662' },
-            { a3: 'level 3 - 5553', b3: 'level 3 - 6663' },
-            { a3: 'level 3 - 5554', b3: 'level 3 - 6664' },
-            { a3: 'level 3 - 5555', b3: 'level 3 - 6665' },
-            { a3: 'level 3 - 5556', b3: 'level 3 - 6666' },
-          ],
-        },
-      ],
-    },
-  ]) */
+
   const defaultColDef = useMemo<ColDef>(
     () => ({
       resizable: false,
@@ -112,40 +77,114 @@ const MultiTableSolution: FunctionComponent<Props> = ({
   )
   const themeClass = isDarkMode ? `${gridTheme}-dark` : gridTheme
 
-
-  /* const detailCellRendererParams = useMemo(
-    () => ({
-      detailGridOptions: {
-        columnDefs: [
-          { field: 'title', flex: 1.5 },
-          { field: 'available', maxWidth: 120 },
-          { field: 'format', flex: 2 },
-          { field: 'label', flex: 1 },
-          { field: 'country', flex: 0.66 },
-          {
-            field: 'cat',
-            headerName: 'Cat#',
-            type: 'rightAligned',
-            flex: 0.66,
-          },
-          { field: 'year', type: 'rightAligned', maxWidth: 80 },
-        ],
-        headerHeight: 38,
-      },
-      getDetailRowData: ({
-        successCallback,
-        data: { variantDetails },
-      }: GetDetailRowDataParams) => successCallback(variantDetails),
-    }),
-    []
-  ) */
   const detailCellRendererParams = useMemo<any>(() => {
     return {
       // level 2 grid options
       detailGridOptions: {
         columnDefs: [
-          { field: 'a2', cellRenderer: 'agGroupCellRenderer' },
-          { field: 'b2' },
+          { field: 'wbs', cellRenderer: 'agGroupCellRenderer' },
+          { field: 'name' },
+          {
+            headerName: 'Status',
+            field: 'status',
+            editable: true,
+            width: 300,
+            cellRenderer: StatusCellRenderer,
+            cellEditor: 'agRichSelectCellEditor',
+            cellEditorParams: {
+              values: status,
+            },
+          },
+          {
+                headerName: 'Start Date',
+                field: 'startDate',
+                editable: false,
+                width: 150,
+                valueFormatter: (params: ValueFormatterParams<any, Date>) => {
+                  if (!params.value) {
+                    return ''
+                  }
+                  const month = params.value.getMonth() + 1
+                  const day = params.value.getDate()
+                  return `${params.value.getFullYear()}-${
+                    month < 10 ? '0' + month : month
+                  }-${day < 10 ? '0' + day : day}`
+                },
+                cellEditor: 'agDateCellEditor',
+              },
+              {
+                headerName: 'End Date',
+                field: 'endDate',
+                editable: true,
+                width: 150,
+                valueFormatter: (params: ValueFormatterParams<any, Date>) => {
+                  if (!params.value) {
+                    return ''
+                  }
+                  const month = params.value.getMonth() + 1
+                  const day = params.value.getDate()
+                  return `${params.value.getFullYear()}-${
+                    month < 10 ? '0' + month : month
+                  }-${day < 10 ? '0' + day : day}`
+                },
+                cellEditor: 'agDateCellEditor',
+              },
+              {
+                headerName: 'Assigned',
+                width: 150,
+                field: 'assigned',
+              },
+              {
+                headerName: 'Discipline',
+                width: 150,
+                field: 'discipline',
+              },
+              {
+                headerName: 'Units',
+                field: 'units',
+                width: 100,
+                editable: true,
+              },
+              {
+                headerName: 'Rate',
+                field: 'rate',
+                valueFormatter: ({ value }: ValueFormatterParams) =>
+                  value == null ? '' : `$${Math.round(value).toLocaleString()}`,
+                width: 100,
+                editable: true,
+              },
+              {
+                headerName: 'Budget',
+                field: 'budget',
+                valueFormatter: ({ value }: ValueFormatterParams) =>
+                  value == null ? '' : `$${Math.round(value).toLocaleString()}`,
+                width: 200,
+                editable: true,
+              },
+              {
+                headerName: 'Fee/Cap',
+                field: 'fee',
+                valueFormatter: ({ value }: ValueFormatterParams) =>
+                  value == null ? '' : `$${Math.round(value).toLocaleString()}`,
+                width: 150,
+                editable: true,
+              },
+              {
+                headerName: 'Used',
+                width: 100,
+                field: 'used',
+              },
+              {
+                headerName: 'Notes',
+                width: 100,
+                field: 'notes',
+              },
+              {
+                field: '',
+                pinned: 'right',
+                cellRenderer: EditCellRenderer,
+                width: 50,
+              },
         ],
         defaultColDef: {
           flex: 1,
@@ -157,8 +196,8 @@ const MultiTableSolution: FunctionComponent<Props> = ({
           // level 3 grid options
           detailGridOptions: {
             columnDefs: [
-              { field: 'a3', cellRenderer: 'agGroupCellRenderer' },
-              { field: 'b3' },
+              { field: 'wbs', cellRenderer: 'agGroupCellRenderer' },
+              { field: 'name' },
             ],
             defaultColDef: {
               flex: 1,
