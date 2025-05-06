@@ -1,18 +1,8 @@
 export function getData() {
   const data = [
     {
-      product: "Rumours",
-      artist: "Fleetwood Mac",
-      category: "Soft Rock",
-      year: "1977",
-      status: "active",
-      available: 12,
-      incoming: 45,
-      image: "rumours",
-      price: 40,
-      sold: 15,
-      priceIncrease: 5, // in percentage
-      variants: 3,
+      wbs: "1",
+      name: "Phase 1",
       variantDetails: [
         {
           title: "Rumours",

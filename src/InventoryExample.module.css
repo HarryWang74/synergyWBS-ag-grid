@@ -138,7 +138,7 @@
   --ag-header-background-color: transparent !important;
 
   height: calc(
-    100vh - var(--layout-grid-header-height) - 62px - var(--layout-grid-margin)
+    80vh - var(--layout-grid-header-height) - 62px - var(--layout-grid-margin)
   );
   margin: 0 var(--layout-grid-margin) var(--layout-grid-margin);
 }
