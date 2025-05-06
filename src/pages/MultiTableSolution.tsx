@@ -10,6 +10,7 @@ import {
   AllCommunityModule,
   ClientSideRowModelModule,
   ModuleRegistry,
+  IDetailCellRendererParams,
 } from 'ag-grid-community'
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
@@ -31,11 +32,6 @@ import {
 
 import styles from '../InventoryExample.module.css'
 import { getData } from '../data/multi-table-data'
-import { ActionsCellRenderer } from '../components/cell-renderers/ActionsCellRenderer'
-import { ProductCellRenderer } from '../components/cell-renderers/ProductCellRenderer'
-import { StatusCellRenderer } from '../components/cell-renderers/StatusCellRenderer'
-import { StockCellRenderer } from '../components/cell-renderers/StockCellRenderer'
-import { PriceCellRenderer } from '../components/cell-renderers/PriceCellRenderer'
 
 ModuleRegistry.registerModules([
   AllCommunityModule,
@@ -53,16 +49,6 @@ interface Props {
 
 const paginationPageSizeSelector = [5, 10, 20]
 
-const statuses = {
-  all: 'All',
-  active: 'Active',
-  paused: 'On Hold',
-  outOfStock: 'Out of Stock',
-}
-
-const statusFormatter: ValueFormatterFunc = ({ value }) =>
-  statuses[value as keyof typeof statuses] ?? ''
-
 const MultiTableSolution: FunctionComponent<Props> = ({
   gridTheme = 'ag-theme-quartz',
   isDarkMode,
@@ -70,15 +56,48 @@ const MultiTableSolution: FunctionComponent<Props> = ({
   const gridRef = useRef<AgGridReact>(null)
 
   const [colDefs] = useState<ColDef[]>([
-    {
-      field: 'wbs',
-      headerName: 'WBS',
-      cellRenderer: 'agGroupCellRenderer',
-      headerClass: 'header-product',
-      width: 100,
-    },
+    { field: 'a1', cellRenderer: 'agGroupCellRenderer' },
+    { field: 'b1' },
   ])
   const [rowData] = useState(getData())
+  /* const [rowData, setRowData] = useState<any[]>([
+    {
+      a1: 'level 1 - 111',
+      b1: 'level 1 - 222',
+      children: [
+        {
+          a2: 'level 2 - 333',
+          b2: 'level 2 - 444',
+          children: [
+            { a3: 'level 3 - 5551', b3: 'level 3 - 6661' },
+            { a3: 'level 3 - 5552', b3: 'level 3 - 6662' },
+            { a3: 'level 3 - 5553', b3: 'level 3 - 6663' },
+            { a3: 'level 3 - 5554', b3: 'level 3 - 6664' },
+            { a3: 'level 3 - 5555', b3: 'level 3 - 6665' },
+            { a3: 'level 3 - 5556', b3: 'level 3 - 6666' },
+          ],
+        },
+      ],
+    },
+    {
+      a1: 'level 1 - 111',
+      b1: 'level 1 - 222',
+      children: [
+        {
+          a2: 'level 2 - 333',
+          b2: 'level 2 - 444',
+          children: [
+            { a3: 'level 3 - 5551', b3: 'level 3 - 6661' },
+            { a3: 'level 3 - 5552', b3: 'level 3 - 6662' },
+            { a3: 'level 3 - 5553', b3: 'level 3 - 6663' },
+            { a3: 'level 3 - 5554', b3: 'level 3 - 6664' },
+            { a3: 'level 3 - 5555', b3: 'level 3 - 6665' },
+            { a3: 'level 3 - 5556', b3: 'level 3 - 6666' },
+          ],
+        },
+      ],
+    },
+  ]) */
   const defaultColDef = useMemo<ColDef>(
     () => ({
       resizable: false,
@@ -94,7 +113,7 @@ const MultiTableSolution: FunctionComponent<Props> = ({
   const themeClass = isDarkMode ? `${gridTheme}-dark` : gridTheme
 
 
-  const detailCellRendererParams = useMemo(
+  /* const detailCellRendererParams = useMemo(
     () => ({
       detailGridOptions: {
         columnDefs: [
@@ -119,8 +138,42 @@ const MultiTableSolution: FunctionComponent<Props> = ({
       }: GetDetailRowDataParams) => successCallback(variantDetails),
     }),
     []
-  )
-
+  ) */
+  const detailCellRendererParams = useMemo<any>(() => {
+    return {
+      // level 2 grid options
+      detailGridOptions: {
+        columnDefs: [
+          { field: 'a2', cellRenderer: 'agGroupCellRenderer' },
+          { field: 'b2' },
+        ],
+        defaultColDef: {
+          flex: 1,
+        },
+        groupDefaultExpanded: 1,
+        masterDetail: true,
+        detailRowHeight: 240,
+        detailCellRendererParams: {
+          // level 3 grid options
+          detailGridOptions: {
+            columnDefs: [
+              { field: 'a3', cellRenderer: 'agGroupCellRenderer' },
+              { field: 'b3' },
+            ],
+            defaultColDef: {
+              flex: 1,
+            },
+          },
+          getDetailRowData: (params) => {
+            params.successCallback(params.data.children)
+          },
+        } as IDetailCellRendererParams,
+      },
+      getDetailRowData: (params) => {
+        params.successCallback(params.data.children)
+      },
+    } as IDetailCellRendererParams
+  }, [])
   return (
     <div className="mt-8">
       <div className={styles.container}>

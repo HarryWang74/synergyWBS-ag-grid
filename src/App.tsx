@@ -13,11 +13,11 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        index: true,
+        path: 'multi-table/',
         element: <MultiTableSolution />,
       },
       {
-        path: 'one-table/',
+        index: true,
         element: <OneTableSolution />,
       },
     ],
