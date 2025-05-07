@@ -1,219 +1,256 @@
-'use client'
-
-import * as React from 'react'
+import React, { HTMLProps } from 'react'
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react'
-
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import {
+  Column,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+  ExpandedState,
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getFilteredRowModel,
+  getExpandedRowModel,
+  ColumnDef,
+  flexRender,
+} from '@tanstack/react-table'
+import { makeData, Person } from '../data/shadcn-table-data'
 
-const data: Payment[] = [
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@example.com',
-  },
-  {
-    id: '3u1reuv4',
-    amount: 242,
-    status: 'success',
-    email: 'Abe45@example.com',
-  },
-  {
-    id: 'derv1ws0',
-    amount: 837,
-    status: 'processing',
-    email: 'Monserrat44@example.com',
-  },
-  {
-    id: '5kma53ae',
-    amount: 874,
-    status: 'success',
-    email: 'Silas22@example.com',
-  },
-  {
-    id: 'bhqecj4p',
-    amount: 721,
-    status: 'failed',
-    email: 'carmella@example.com',
-  },
-]
+const ShadcnTable = () => {
+  const rerender = React.useReducer(() => ({}), {})[1]
 
-export type Payment = {
-  id: string
-  amount: number
-  email: string
-  status: string
-}
+  const columns = React.useMemo<ColumnDef<Person>[]>(
+    () => [
+      {
+        accessorKey: 'firstName',
+        header: ({ table }) => (
+          <>
+            <IndeterminateCheckbox
+              {...{
+                checked: table.getIsAllRowsSelected(),
+                indeterminate: table.getIsSomeRowsSelected(),
+                onChange: table.getToggleAllRowsSelectedHandler(),
+              }}
+            />{' '}
+            <button
+              {...{
+                onClick: table.getToggleAllRowsExpandedHandler(),
+              }}
+            >
+              {table.getIsAllRowsExpanded() ? '👇' : '👉'}
+            </button>{' '}
+            First Name
+          </>
+        ),
+        cell: ({ row, getValue }) => (
+          <div
+            style={{
+              // Since rows are flattened by default,
+              // we can use the row.depth property
+              // and paddingLeft to visually indicate the depth
+              // of the row
+              paddingLeft: `${row.depth * 2}rem`,
+            }}
+          >
+            <div>
+              <IndeterminateCheckbox
+                {...{
+                  checked: row.getIsSelected(),
+                  indeterminate: row.getIsSomeSelected(),
+                  onChange: row.getToggleSelectedHandler(),
+                }}
+              />{' '}
+              {row.getCanExpand() ? (
+                <button
+                  {...{
+                    onClick: row.getToggleExpandedHandler(),
+                    style: { cursor: 'pointer' },
+                  }}
+                >
+                  {row.getIsExpanded() ? '👇' : '👉'}
+                </button>
+              ) : (
+                '🔵'
+              )}{' '}
+              {getValue<boolean>()}
+            </div>
+          </div>
+        ),
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorFn: (row) => row.lastName,
+        id: 'lastName',
+        cell: (info) => info.getValue(),
+        header: () => <span>Last Name</span>,
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorKey: 'age',
+        header: () => 'Age',
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorKey: 'visits',
+        header: () => <span>Visits</span>,
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorKey: 'status',
+        header: 'Status',
+        footer: (props) => props.column.id,
+      },
+      {
+        accessorKey: 'progress',
+        header: 'Profile Progress',
+        footer: (props) => props.column.id,
+      },
+    ],
+    []
+  )
 
-export const columns: ColumnDef<Payment>[] = [
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue('status')}</div>
-    ),
-  },
-  {
-    accessorKey: 'email',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('email')}</div>,
-  },
-  {
-    accessorKey: 'amount',
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('amount'))
+  const [data, setData] = React.useState(() => makeData(100, 5, 3))
+  const refreshData = () => setData(() => makeData(100, 5, 3))
 
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
-    },
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
-]
-
-
-const ShadcnTable = ()=> {
-
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [expanded, setExpanded] = React.useState<ExpandedState>({})
 
   const table = useReactTable({
     data,
     columns,
+    state: {
+      expanded,
+    },
+    onExpandedChange: setExpanded,
+    getSubRows: (row) => row.subRows,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    state: {
-      columnVisibility,
-      rowSelection,
-    },
+    getExpandedRowModel: getExpandedRowModel(),
+    // filterFromLeafRows: true,
+    // maxLeafRowFilterDepth: 0,
+    debugTable: true,
   })
 
   return (
-    <div className="w-full p-4">
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+    <div className="p-2">
+      <div className="h-2" />
+      <table>
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <th key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder ? null : (
+                      <div>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                      </div>
+                    )}
+                  </th>
+                )
+              })}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => {
+            return (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => {
                   return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <td key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                    </td>
+                  )
+                })}
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+      <div className="h-2" />
+      <label>Expanded State:</label>
+      <pre>{JSON.stringify(expanded, null, 2)}</pre>
+      <label>Row Selection State:</label>
+      <pre>{JSON.stringify(table.getState().rowSelection, null, 2)}</pre>
     </div>
+  )
+}
+
+function Filter({
+  column,
+  table,
+}: {
+  column: Column<any, any>
+  table: Table<any>
+}) {
+  const firstValue = table
+    .getPreFilteredRowModel()
+    .flatRows[0]?.getValue(column.id)
+
+  const columnFilterValue = column.getFilterValue()
+
+  return typeof firstValue === 'number' ? (
+    <div className="flex space-x-2">
+      <input
+        type="number"
+        value={(columnFilterValue as [number, number])?.[0] ?? ''}
+        onChange={(e) =>
+          column.setFilterValue((old: [number, number]) => [
+            e.target.value,
+            old?.[1],
+          ])
+        }
+        placeholder={`Min`}
+        className="w-24 border shadow rounded"
+      />
+      <input
+        type="number"
+        value={(columnFilterValue as [number, number])?.[1] ?? ''}
+        onChange={(e) =>
+          column.setFilterValue((old: [number, number]) => [
+            old?.[0],
+            e.target.value,
+          ])
+        }
+        placeholder={`Max`}
+        className="w-24 border shadow rounded"
+      />
+    </div>
+  ) : (
+    <input
+      type="text"
+      value={(columnFilterValue ?? '') as string}
+      onChange={(e) => column.setFilterValue(e.target.value)}
+      placeholder={`Search...`}
+      className="w-36 border shadow rounded"
+    />
+  )
+}
+
+function IndeterminateCheckbox({
+  indeterminate,
+  className = '',
+  ...rest
+}: { indeterminate?: boolean } & HTMLProps<HTMLInputElement>) {
+  const ref = React.useRef<HTMLInputElement>(null!)
+
+  React.useEffect(() => {
+    if (typeof indeterminate === 'boolean') {
+      ref.current.indeterminate = !rest.checked && indeterminate
+    }
+  }, [ref, indeterminate])
+
+  return (
+    <input
+      type="checkbox"
+      ref={ref}
+      className={className + ' cursor-pointer'}
+      {...rest}
+    />
   )
 }
 export default ShadcnTable
