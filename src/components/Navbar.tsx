@@ -4,7 +4,7 @@ const Navbar = () => {
   return (
     <div>
       <NavLink to="/">
-        <h1 className="border-i-border-color mb-4">AG-GRID Testing</h1>
+        <h1 className="border-i-border-color mb-4">WBS table Testing</h1>
       </NavLink>
       <div className="border-b border-i-border-color">
         <NavLink
@@ -14,7 +14,7 @@ const Navbar = () => {
             ' inline-block p-4 hover:bg-i-hover-color'
           }
         >
-          One Table Solution
+          Ag-grid One Table Solution
         </NavLink>
         <NavLink
           to="/multi-table"
@@ -23,7 +23,16 @@ const Navbar = () => {
             ' inline-block p-4 hover:bg-i-hover-color'
           }
         >
-          Multi Table Solution
+          Ag-grid Multi Table Solution
+        </NavLink>
+        <NavLink
+          to="/shadcn"
+          className={({ isActive }) =>
+            (isActive ? 'text-i-primary' : '') +
+            ' inline-block p-4 hover:bg-i-hover-color'
+          }
+        >
+          Shadcn Table Solution
         </NavLink>
       </div>
     </div>

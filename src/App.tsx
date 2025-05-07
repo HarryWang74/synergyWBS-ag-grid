@@ -5,6 +5,7 @@ import Layout from './Layout'
 import { 
   OneTableSolution, 
   MultiTableSolution,
+  ShadcnTable,
 } from './pages'
 
 const router = createBrowserRouter([
@@ -12,6 +13,10 @@ const router = createBrowserRouter([
     path: '/',
     element: <Layout />,
     children: [
+      {
+        path: 'shadcn/',
+        element: <ShadcnTable />,
+      },
       {
         path: 'multi-table/',
         element: <MultiTableSolution />,
