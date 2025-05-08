@@ -25,7 +25,7 @@ const Navbar = () => {
         >
           Ag-grid Multi Table Solution
         </NavLink>
-{/*         <NavLink
+        <NavLink
           to="/shadcn"
           className={({ isActive }) =>
             (isActive ? 'text-i-primary' : '') +
@@ -33,7 +33,7 @@ const Navbar = () => {
           }
         >
           Shadcn Table Solution
-        </NavLink> */}
+        </NavLink>
       </div>
     </div>
   )

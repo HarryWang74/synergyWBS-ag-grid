@@ -1,47 +1,80 @@
-import { faker } from '@faker-js/faker'
-
-export type Person = {
-  firstName: string
-  lastName: string
-  age: number
-  visits: number
-  progress: number
-  status: 'relationship' | 'complicated' | 'single'
-  subRows?: Person[]
-}
-
-const range = (len: number) => {
-  const arr: number[] = []
-  for (let i = 0; i < len; i++) {
-    arr.push(i)
-  }
-  return arr
-}
-
-const newPerson = (): Person => {
-  return {
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-    age: faker.number.int(40),
-    visits: faker.number.int(1000),
-    progress: faker.number.int(100),
-    status: faker.helpers.shuffle<Person['status']>([
-      'relationship',
-      'complicated',
-      'single',
-    ])[0]!,
-  }
-}
-
-export function makeData(...lens: number[]) {
-  const makeDataLevel = (depth = 0): Person[] => {
-    const len = lens[depth]!
-    return range(len).map((d): Person => {
-      return {
-        ...newPerson(),
-        subRows: lens[depth + 1] ? makeDataLevel(depth + 1) : undefined,
-      }
-    })
-  }
-  return makeDataLevel()
+export function getData() {
+  return [
+    {
+      wbs: '1',
+      name: 'Phase 1',
+      subRows: [
+        {
+          wbs: '1.1',
+          name: 'Stage 1',
+          status: 'Active',
+          startDate: new Date(),
+          endDate: new Date(),
+          assigned: 'Staff A',
+          discipline: 'Discipline A',
+          units: 20,
+          rate: 200,
+          budget: 2000000,
+          fee: 1000,
+          used: 'CUS',
+          notes: 2,
+          subRows: [
+            {
+              wbs: '1.1.1',
+              name: 'Task 1',
+              status: 'Completed',
+              startDate: new Date(),
+              endDate: new Date(),
+              assigned: 'Staff A',
+              notes: 2,
+            },
+            {
+              wbs: '1.1.2',
+              name: 'Task 2',
+              status: 'Completed',
+              startDate: new Date(),
+              endDate: new Date(),
+              assigned: 'Staff A',
+              notes: 2,
+            },
+          ],
+        },
+        {
+          wbs: '1.2',
+          name: 'Stage 2',
+          status: 'Active',
+          startDate: new Date(),
+          endDate: new Date(),
+          assigned: 'Staff A',
+          discipline: 'Discipline B',
+          units: 10,
+          rate: 100,
+          budget: 1000000,
+          fee: 500,
+          used: 'CUS',
+          notes: 1,
+          subRows: [
+            {
+              wbs: '1.2.1',
+              name: 'Task 3',
+              status: 'Completed',
+              startDate: new Date(),
+              endDate: new Date(),
+              assigned: 'Staff B',
+              notes: 1,
+            },
+            {
+              wbs: '1.2.2',
+              name: 'Task 4',
+              status: 'Completed',
+              startDate: new Date(),
+              endDate: new Date(),
+              assigned: 'Staff B',
+              notes: 1,
+            },
+          ],
+        },
+      ],
+    },
+  ]
 }

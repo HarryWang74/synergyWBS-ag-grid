@@ -1,44 +1,41 @@
 import React, { HTMLProps } from 'react'
+import { BsCaretRightFill } from 'react-icons/bs'
+import { BsCaretDownFill } from 'react-icons/bs'
 import {
   Column,
   Table,
   ExpandedState,
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
-  getFilteredRowModel,
   getExpandedRowModel,
   ColumnDef,
   flexRender,
 } from '@tanstack/react-table'
-import { makeData, Person } from '../data/shadcn-table-data'
+import { getData } from '../data/shadcn-table-data'
+
+export const formatCurrency = (amount: number | null) => {
+  const value = amount || 0
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(value)
+}
+
+export const formatDate = (date: Date) => {
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date)
+}
+
 
 const ShadcnTable = () => {
-  const rerender = React.useReducer(() => ({}), {})[1]
-
-  const columns = React.useMemo<ColumnDef<Person>[]>(
+  const columns = React.useMemo<ColumnDef<any>[]>(
     () => [
       {
-        accessorKey: 'firstName',
-        header: ({ table }) => (
-          <>
-            <IndeterminateCheckbox
-              {...{
-                checked: table.getIsAllRowsSelected(),
-                indeterminate: table.getIsSomeRowsSelected(),
-                onChange: table.getToggleAllRowsSelectedHandler(),
-              }}
-            />{' '}
-            <button
-              {...{
-                onClick: table.getToggleAllRowsExpandedHandler(),
-              }}
-            >
-              {table.getIsAllRowsExpanded() ? '👇' : '👉'}
-            </button>{' '}
-            First Name
-          </>
-        ),
+        accessorKey: 'wbs',
+        header: ({ table }) => <>WBS</>,
         cell: ({ row, getValue }) => (
           <div
             style={{
@@ -50,13 +47,6 @@ const ShadcnTable = () => {
             }}
           >
             <div>
-              <IndeterminateCheckbox
-                {...{
-                  checked: row.getIsSelected(),
-                  indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler(),
-                }}
-              />{' '}
               {row.getCanExpand() ? (
                 <button
                   {...{
@@ -64,50 +54,77 @@ const ShadcnTable = () => {
                     style: { cursor: 'pointer' },
                   }}
                 >
-                  {row.getIsExpanded() ? '👇' : '👉'}
+                  {row.getIsExpanded() ? (
+                    <BsCaretDownFill />
+                  ) : (
+                    <BsCaretRightFill />
+                  )}
                 </button>
-              ) : (
-                '🔵'
-              )}{' '}
+              ) : null}
               {getValue<boolean>()}
             </div>
           </div>
         ),
-        footer: (props) => props.column.id,
       },
       {
-        accessorFn: (row) => row.lastName,
-        id: 'lastName',
-        cell: (info) => info.getValue(),
-        header: () => <span>Last Name</span>,
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: 'age',
-        header: () => 'Age',
-        footer: (props) => props.column.id,
-      },
-      {
-        accessorKey: 'visits',
-        header: () => <span>Visits</span>,
-        footer: (props) => props.column.id,
+        accessorKey: 'name',
+        header: () => 'Name',
       },
       {
         accessorKey: 'status',
-        header: 'Status',
-        footer: (props) => props.column.id,
+        header: () => 'Status',
       },
       {
-        accessorKey: 'progress',
-        header: 'Profile Progress',
-        footer: (props) => props.column.id,
+        accessorKey: 'startDate',
+        cell: ({ getValue }) => formatDate(getValue<Date>() ?? new Date()),
+        header: () => 'Start Date',
+      },
+      {
+        accessorKey: 'endDate',
+        cell: ({ getValue }) => formatDate(getValue<Date>() ?? new Date()),
+        header: () => 'End Date',
+      },
+      {
+        accessorKey: 'assigned',
+        header: () => 'Assigned',
+      },
+      {
+        accessorKey: 'discipline',
+        header: () => 'Discipline',
+      },
+      {
+        accessorKey: 'units',
+        header: () => 'Units',
+      },
+      {
+        accessorKey: 'rate',
+        cell: ({ getValue }) => formatCurrency(getValue<number>()),
+        header: () => 'Rate',
+      },
+      {
+        accessorKey: 'budget',
+        cell: ({ getValue }) => formatCurrency(getValue<number>()),
+        header: () => 'Budget',
+      },
+      {
+        accessorKey: 'fee',
+        cell: ({ getValue }) => formatCurrency(getValue<number>()),
+        header: () => 'Fee',
+      },
+      {
+        accessorKey: 'used',
+        header: () => 'Used',
+      },
+      {
+        accessorKey: 'notes',
+        header: () => 'Notes',
       },
     ],
     []
   )
 
-  const [data, setData] = React.useState(() => makeData(100, 5, 3))
-  const refreshData = () => setData(() => makeData(100, 5, 3))
+  const [data, setData] = React.useState(() => getData())
+  console.log(data)
 
   const [expanded, setExpanded] = React.useState<ExpandedState>({})
 
@@ -120,11 +137,7 @@ const ShadcnTable = () => {
     onExpandedChange: setExpanded,
     getSubRows: (row) => row.subRows,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
-    // filterFromLeafRows: true,
-    // maxLeafRowFilterDepth: 0,
     debugTable: true,
   })
 
@@ -174,8 +187,6 @@ const ShadcnTable = () => {
       <div className="h-2" />
       <label>Expanded State:</label>
       <pre>{JSON.stringify(expanded, null, 2)}</pre>
-      <label>Row Selection State:</label>
-      <pre>{JSON.stringify(table.getState().rowSelection, null, 2)}</pre>
     </div>
   )
 }
