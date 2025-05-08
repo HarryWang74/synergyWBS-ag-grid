@@ -35,7 +35,7 @@ const ShadcnTable = () => {
     () => [
       {
         accessorKey: 'wbs',
-        header: ({ table }) => <>WBS</>,
+        header: ({}) => <>WBS</>,
         cell: ({ row, getValue }) => (
           <div
             style={{
