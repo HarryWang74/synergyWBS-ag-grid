@@ -41,7 +41,7 @@ const Navbar = () => {
             ' inline-block p-4 hover:bg-i-hover-color'
           }
         >
-          Demo
+          Juan made by claude code
         </NavLink>
       </div>
     </div>
