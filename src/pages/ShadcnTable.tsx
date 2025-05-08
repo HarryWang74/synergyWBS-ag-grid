@@ -3,7 +3,6 @@ import { BsCaretRightFill } from 'react-icons/bs'
 import { BsCaretDownFill } from 'react-icons/bs'
 import {
   Column,
-  Table,
   ExpandedState,
   useReactTable,
   getCoreRowModel,
@@ -12,6 +11,16 @@ import {
   flexRender,
 } from '@tanstack/react-table'
 import { getData } from '../data/shadcn-table-data'
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+
 
 export const formatCurrency = (amount: number | null) => {
   const value = amount || 0
@@ -144,46 +153,44 @@ const ShadcnTable = () => {
   return (
     <div className="p-2">
       <div className="h-2" />
-      <table>
-        <thead>
+      <Table>
+        <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <th key={header.id} colSpan={header.colSpan}>
-                    {header.isPlaceholder ? null : (
-                      <div>
-                        {flexRender(
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
-                      </div>
-                    )}
-                  </th>
+                  </TableHead>
                 )
               })}
-            </tr>
+            </TableRow>
           ))}
-        </thead>
-        <tbody>
+        </TableHeader>
+        <TableBody>
           {table.getRowModel().rows.map((row) => {
             return (
-              <tr key={row.id}>
+              <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   return (
-                    <td key={cell.id}>
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
-                    </td>
+                    </TableCell>
                   )
                 })}
-              </tr>
+              </TableRow>
             )
           })}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
       <div className="h-2" />
       <label>Expanded State:</label>
       <pre>{JSON.stringify(expanded, null, 2)}</pre>
