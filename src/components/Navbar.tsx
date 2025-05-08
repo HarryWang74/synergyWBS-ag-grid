@@ -41,7 +41,7 @@ const Navbar = () => {
             ' inline-block p-4 hover:bg-i-hover-color'
           }
         >
-          Juan made by claude code
+          Juan made by AI (claude code)
         </NavLink>
       </div>
     </div>
