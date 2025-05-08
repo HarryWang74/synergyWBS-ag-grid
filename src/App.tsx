@@ -6,6 +6,7 @@ import {
   OneTableSolution, 
   MultiTableSolution,
   ShadcnTable,
+  DataTableDemo,
 } from './pages'
 
 const router = createBrowserRouter([
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: 'multi-table/',
         element: <MultiTableSolution />,
+      },
+      {
+        path: 'demo/',
+        element: <DataTableDemo />,
       },
       {
         index: true,
