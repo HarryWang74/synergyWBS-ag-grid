@@ -34,7 +34,7 @@ const Navbar = () => {
         >
           Shadcn Table Solution
         </NavLink>
-        <NavLink
+ {/*        <NavLink
           to="/demo"
           className={({ isActive }) =>
             (isActive ? 'text-i-primary' : '') +
@@ -42,7 +42,7 @@ const Navbar = () => {
           }
         >
           Juan made by AI (claude code)
-        </NavLink>
+        </NavLink> */}
       </div>
     </div>
   )
