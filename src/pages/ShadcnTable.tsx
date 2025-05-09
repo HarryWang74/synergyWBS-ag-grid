@@ -11,7 +11,7 @@ import {
   flexRender,
 } from '@tanstack/react-table'
 import { getData } from '../data/shadcn-table-data'
-
+import './table.css'
 import {
   Table,
   TableBody,
@@ -191,7 +191,12 @@ const ShadcnTable = () => {
   return (
     <div className="p-2">
       <div className="h-2" />
-      <Table>
+      <Table
+        //IMPORTANT: pin and resize feature!
+        style={{
+          width: table.getTotalSize(),
+        }}
+      >
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -204,45 +209,65 @@ const ShadcnTable = () => {
                     key={header.id}
                     style={{ ...getCommonPinningStyles(column) }}
                   >
-                    
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    <div className="flex gap-1 justify-center">
-                      {header.column.getIsPinned() !== 'left' ? (
-                        <button
-                          className="border rounded px-2"
-                          onClick={() => {
-                            header.column.pin('left')
-                          }}
-                        >
-                          {'<='}
-                        </button>
-                      ) : null}
-                      {header.column.getIsPinned() ? (
-                        <button
-                          className="border rounded px-2"
-                          onClick={() => {
-                            header.column.pin(false)
-                          }}
-                        >
-                          X
-                        </button>
-                      ) : null}
-                      {header.column.getIsPinned() !== 'right' ? (
-                        <button
-                          className="border rounded px-2"
-                          onClick={() => {
-                            header.column.pin('right')
-                          }}
-                        >
-                          {'=>'}
-                        </button>
-                      ) : null}
+                    <div className="whitespace-nowrap">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}{' '}
+                      {/* Demo getIndex behavior */}
+                      {column.getIndex(column.getIsPinned() || 'center')}
                     </div>
+                    {/* pin controls start */}
+                    {!header.isPlaceholder && header.column.getCanPin() && (
+                      <div className="flex gap-1 justify-center">
+                        {header.column.getIsPinned() !== 'left' ? (
+                          <button
+                            className="border rounded px-2"
+                            onClick={() => {
+                              header.column.pin('left')
+                            }}
+                          >
+                            {'<='}
+                          </button>
+                        ) : null}
+                        {header.column.getIsPinned() ? (
+                          <button
+                            className="border rounded px-2"
+                            onClick={() => {
+                              header.column.pin(false)
+                            }}
+                          >
+                            X
+                          </button>
+                        ) : null}
+                        {header.column.getIsPinned() !== 'right' ? (
+                          <button
+                            className="border rounded px-2"
+                            onClick={() => {
+                              header.column.pin('right')
+                            }}
+                          >
+                            {'=>'}
+                          </button>
+                        ) : null}
+                      </div>
+                    )}
+                    {/* pin controls finish */}
+
+                    {/* resize controls start */}
+                    <div
+                      {...{
+                        onDoubleClick: () => header.column.resetSize(),
+                        onMouseDown: header.getResizeHandler(),
+                        onTouchStart: header.getResizeHandler(),
+                        className: `resizer ${
+                          header.column.getIsResizing() ? 'isResizing' : ''
+                        }`,
+                      }}
+                    />
+                    {/* resize controls finish */}
                   </TableHead>
                 )
               })}
@@ -274,9 +299,13 @@ const ShadcnTable = () => {
           })}
         </TableBody>
       </Table>
-      <div className="h-2" />
-      <div><b>Expanded State:</b> {JSON.stringify(expanded, null, 2)}</div>
-      <pre>{JSON.stringify(table.getState().columnPinning, null, 2)}</pre>
+      <div className="mt-4" />
+      <div>
+        <b>Expanded State:</b> {JSON.stringify(expanded, null, 2)}
+      </div>
+      <div>
+        <b>Pin status:</b> {JSON.stringify(table.getState().columnPinning, null, 2)}
+      </div>
     </div>
   )
 }
