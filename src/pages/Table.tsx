@@ -513,6 +513,7 @@ function RecursiveRow({
 // ─── Main Table Component ─────────────────────────────────────────────
 export default function DataTableDemo() {
   const [data, setData] = useState<Task[]>(initialData);
+  console.log('Data:', data);
   const [columns, setColumns] = useState(defaultColumns);
   const [sorting, setSorting] = useState<SortingState>([]);
   

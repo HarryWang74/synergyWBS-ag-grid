@@ -20,7 +20,20 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination'
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
 
 export const formatCurrency = (amount: number | null) => {
   const value = amount || 0
@@ -37,7 +50,6 @@ export const formatDate = (date: Date) => {
     day: 'numeric',
   }).format(date)
 }
-
 
 const ShadcnTable = () => {
   const columns = React.useMemo<ColumnDef<any>[]>(
@@ -101,7 +113,18 @@ const ShadcnTable = () => {
       {
         accessorKey: 'assigned',
         header: () => 'Assigned',
-        size: 180,
+        cell: ({ getValue }) => {
+          const assignee = getValue<any>()
+          return (
+            <div className="flex items-center gap-2">
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <span>{assignee}</span>
+            </div>
+          )
+        },
       },
       {
         accessorKey: 'discipline',
@@ -299,12 +322,39 @@ const ShadcnTable = () => {
           })}
         </TableBody>
       </Table>
+      <div>
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious href="#" />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#">1</PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#" isActive>
+                2
+              </PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#">3</PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext href="#" />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </div>
       <div className="mt-4" />
       <div>
         <b>Expanded State:</b> {JSON.stringify(expanded, null, 2)}
       </div>
       <div>
-        <b>Pin status:</b> {JSON.stringify(table.getState().columnPinning, null, 2)}
+        <b>Pin status:</b>{' '}
+        {JSON.stringify(table.getState().columnPinning, null, 2)}
       </div>
     </div>
   )
