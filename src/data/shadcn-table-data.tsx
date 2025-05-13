@@ -1,8 +1,10 @@
+import { v4 as uuid } from 'uuid'
 export function getData() {
   return [
     {
       wbs: '1',
       name: 'Phase 1',
+      id: uuid(),
       subRows: [
         {
           wbs: '1.1',
@@ -18,6 +20,7 @@ export function getData() {
           fee: 1000,
           used: 'CUS',
           notes: 2,
+          id: uuid(),
           subRows: [
             {
               wbs: '1.1.1',
@@ -27,6 +30,7 @@ export function getData() {
               endDate: new Date(),
               assigned: 'Staff A',
               notes: 2,
+              id: uuid(),
             },
             {
               wbs: '1.1.2',
@@ -36,6 +40,7 @@ export function getData() {
               endDate: new Date(),
               assigned: 'Staff A',
               notes: 2,
+              id: uuid(),
             },
           ],
         },
@@ -53,6 +58,7 @@ export function getData() {
           fee: 500,
           used: 'CUS',
           notes: 1,
+          id: uuid(),
           subRows: [
             {
               wbs: '1.2.1',
@@ -62,6 +68,7 @@ export function getData() {
               endDate: new Date(),
               assigned: 'Staff B',
               notes: 1,
+              id: uuid(),
             },
             {
               wbs: '1.2.2',
@@ -71,11 +78,11 @@ export function getData() {
               endDate: new Date(),
               assigned: 'Staff B',
               notes: 1,
+              id: uuid(),
             },
           ],
         },
-      ], 
+      ],
     },
-    
   ]
 }

@@ -7,6 +7,7 @@ import {
   MultiTableSolution,
   ShadcnTable,
   DataTableDemo,
+  Drag,
 } from './pages'
 
 const router = createBrowserRouter([
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <OneTableSolution />,
+      },
+      {
+        path: 'drag/',
+        element: <Drag />,
       },
     ],
   },
