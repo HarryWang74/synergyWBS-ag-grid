@@ -205,22 +205,33 @@ const Drag = () => {
           <TableBody>
             {table.getRowModel().rows.map((row) => (
               <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-
-                    <SortableContext
-    key={cell.id}
-    items={columnOrder}
-    strategy={horizontalListSortingStrategy}
-
->
-
-    <DragAlongCell key={cell.id} cell={cell} />
-
-
-
-    </SortableContext>
-            
-                ))}
+                {row.getVisibleCells().map((cell) => {
+                    const { isDragging, setNodeRef, transform } = useSortable({
+                        id: cell.column.id,
+                    })
+                    const style: CSSProperties = {
+                        opacity: isDragging ? 0.8 : 1,
+                        position: 'relative',
+                        transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
+                        transition: 'width transform 0.2s ease-in-out',
+                        width: cell.column.getSize(),
+                        zIndex: isDragging ? 1 : 0,
+                    }
+                    return (
+                      <SortableContext
+                        key={cell.id}
+                        items={columnOrder}
+                        strategy={horizontalListSortingStrategy}
+                      >
+                        <TableCell style={style} ref={setNodeRef}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      </SortableContext>
+                    )
+                })}
               </TableRow>
             ))}
           </TableBody>
