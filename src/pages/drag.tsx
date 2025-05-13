@@ -1,5 +1,4 @@
 import React, { CSSProperties } from 'react'
-import ReactDOM from 'react-dom/client'
 
 import {
   Cell,
@@ -33,6 +32,15 @@ import {
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+
 const DraggableTableHeader = ({
   header,
 }: {
@@ -54,14 +62,14 @@ const DraggableTableHeader = ({
   }
 
   return (
-    <th colSpan={header.colSpan} ref={setNodeRef} style={style}>
+    <TableHead colSpan={header.colSpan} ref={setNodeRef} style={style}>
       {header.isPlaceholder
         ? null
         : flexRender(header.column.columnDef.header, header.getContext())}
       <button {...attributes} {...listeners}>
         🟰
       </button>
-    </th>
+    </TableHead>
   )
 }
 
@@ -80,9 +88,9 @@ const DragAlongCell = ({ cell }: { cell: Cell<Person, unknown> }) => {
   }
 
   return (
-    <td style={style} ref={setNodeRef}>
+    <TableCell style={style} ref={setNodeRef}>
       {flexRender(cell.column.columnDef.cell, cell.getContext())}
-    </td>
+    </TableCell>
   )
 }
 
@@ -178,16 +186,11 @@ const Drag = () => {
     >
       <div className="p-2">
         <div className="h-4" />
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => rerender()} className="border p-1">
-            Regenerate
-          </button>
-        </div>
         <div className="h-4" />
-        <table>
-          <thead>
+        <Table>
+          <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <TableRow key={headerGroup.id}>
                 <SortableContext
                   items={columnOrder}
                   strategy={horizontalListSortingStrategy}
@@ -196,26 +199,32 @@ const Drag = () => {
                     <DraggableTableHeader key={header.id} header={header} />
                   ))}
                 </SortableContext>
-              </tr>
+              </TableRow>
             ))}
-          </thead>
-          <tbody>
+          </TableHeader>
+          <TableBody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
+              <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
-                  <SortableContext
-                    key={cell.id}
-                    items={columnOrder}
-                    strategy={horizontalListSortingStrategy}
-                  >
-                    <DragAlongCell key={cell.id} cell={cell} />
-                  </SortableContext>
+
+                    <SortableContext
+    key={cell.id}
+    items={columnOrder}
+    strategy={horizontalListSortingStrategy}
+
+>
+
+    <DragAlongCell key={cell.id} cell={cell} />
+
+
+
+    </SortableContext>
+            
                 ))}
-              </tr>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
+          </TableBody>
+        </Table>
       </div>
     </DndContext>
   )

@@ -3,12 +3,14 @@ import { BsCaretRightFill } from 'react-icons/bs'
 import { BsCaretDownFill } from 'react-icons/bs'
 import {
   Column,
+  Cell,
   ExpandedState,
   useReactTable,
   getCoreRowModel,
   getExpandedRowModel,
   ColumnDef,
   flexRender,
+  Header,
 } from '@tanstack/react-table'
 import { getData } from '../data/shadcn-table-data'
 import './table.css'
@@ -43,6 +45,27 @@ import {
 import { Button } from '@/components/ui/button'
 import { ChevronDown } from 'lucide-react'
 
+// needed for table body level scope DnD setup
+import {
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
+  type DragEndEvent,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
+import {
+  arrayMove,
+  SortableContext,
+  horizontalListSortingStrategy,
+} from '@dnd-kit/sortable'
+
+// needed for row & cell level scope DnD setup
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 export const formatCurrency = (amount: number | null) => {
   const value = amount || 0
