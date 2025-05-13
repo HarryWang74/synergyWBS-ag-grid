@@ -41,10 +41,10 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-const DraggableTableHeader = ({
+const TableHeaderWapper = ({
   header,
 }: {
-  header: Header<Person, unknown>
+  header: Header<any, unknown>
 }) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } =
     useSortable({
@@ -70,27 +70,6 @@ const DraggableTableHeader = ({
         🟰
       </button>
     </TableHead>
-  )
-}
-
-const DragAlongCell = ({ cell }: { cell: Cell<Person, unknown> }) => {
-  const { isDragging, setNodeRef, transform } = useSortable({
-    id: cell.column.id,
-  })
-
-  const style: CSSProperties = {
-    opacity: isDragging ? 0.8 : 1,
-    position: 'relative',
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
-    transition: 'width transform 0.2s ease-in-out',
-    width: cell.column.getSize(),
-    zIndex: isDragging ? 1 : 0,
-  }
-
-  return (
-    <TableCell style={style} ref={setNodeRef}>
-      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-    </TableCell>
   )
 }
 
@@ -189,18 +168,22 @@ const Drag = () => {
         <div className="h-4" />
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                <SortableContext
-                  items={columnOrder}
-                  strategy={horizontalListSortingStrategy}
-                >
-                  {headerGroup.headers.map((header) => (
-                    <DraggableTableHeader key={header.id} header={header} />
-                  ))}
-                </SortableContext>
-              </TableRow>
-            ))}
+            {table.getHeaderGroups().map((headerGroup) => {
+              return (
+                <TableRow key={headerGroup.id}>
+                    <SortableContext
+                        items={columnOrder}
+                        strategy={horizontalListSortingStrategy}
+                    >
+                    {headerGroup.headers.map((header) => {
+                        return (
+                          <TableHeaderWapper key={header.id} header={header} />
+                        )
+                    })}
+                    </SortableContext>
+                </TableRow>
+              )
+            })}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.map((row) => (
