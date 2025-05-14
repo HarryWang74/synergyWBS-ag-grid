@@ -63,18 +63,23 @@ import {
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
+const cultureCode = 'en-GB'
+const currencyCode = 'GBP'
+/* const cultureCode = 'en-US'
+const currencyCode = 'USD' */
+
 export const formatCurrency = (amount: number | null) => {
   const value = amount || 0
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat(cultureCode, {
     style: 'currency',
-    currency: 'USD',
+    currency: currencyCode,
   }).format(value)
 }
 
 export const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat(cultureCode, {
     year: 'numeric',
-    month: 'long',
+    month: 'numeric',
     day: 'numeric',
   }).format(date)
 }
