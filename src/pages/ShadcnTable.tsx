@@ -79,6 +79,32 @@ export const formatDate = (date: Date) => {
   }).format(date)
 }
 
+ //These are the important styles to make sticky column pinning work!
+  //Apply styles like this using your CSS strategy of choice with this kind of logic to head cells, data cells, footer cells, etc.
+  //View the index.css file for more needed styles such as border-collapse: separate
+const getPinStyles = (column: Column<any>): CSSProperties => {
+  const isPinned = column.getIsPinned()
+  const isLastLeftPinnedColumn =
+    isPinned === 'left' && column.getIsLastColumn('left')
+  const isFirstRightPinnedColumn =
+    isPinned === 'right' && column.getIsFirstColumn('right')
+
+  return {
+    boxShadow: isLastLeftPinnedColumn
+      ? '-4px 0 4px -4px gray inset'
+      : isFirstRightPinnedColumn
+      ? '4px 0 4px -4px gray inset'
+      : undefined,
+    left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
+    right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
+    opacity: isPinned ? 0.95 : 1,
+    position: isPinned ? 'sticky' : 'relative',
+    width: column.getSize(),
+    zIndex: isPinned ? 1 : 0,
+  }
+}
+
+
 const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } =
     useSortable({
@@ -96,10 +122,64 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
   }
 
   return (
-    <TableHead colSpan={header.colSpan} ref={setNodeRef} style={style}>
+    <TableHead
+      colSpan={header.colSpan}
+      ref={setNodeRef}
+      style={{ ...style, ...getPinStyles(header.column) }}
+    >
       {header.isPlaceholder
         ? null
         : flexRender(header.column.columnDef.header, header.getContext())}
+
+      {/* pin controls start */}
+      {!header.isPlaceholder && header.column.getCanPin() && (
+        <div className="flex gap-1 justify-center">
+          {header.column.getIsPinned() !== 'left' ? (
+            <button
+              className="border rounded px-2"
+              onClick={() => {
+                header.column.pin('left')
+              }}
+            >
+              {'<='}
+            </button>
+          ) : null}
+          {header.column.getIsPinned() ? (
+            <button
+              className="border rounded px-2"
+              onClick={() => {
+                header.column.pin(false)
+              }}
+            >
+              X
+            </button>
+          ) : null}
+          {header.column.getIsPinned() !== 'right' ? (
+            <button
+              className="border rounded px-2"
+              onClick={() => {
+                header.column.pin('right')
+              }}
+            >
+              {'=>'}
+            </button>
+          ) : null}
+        </div>
+      )}
+      {/* pin controls finish */}
+
+      {/* resize controls start */}
+      <div
+        {...{
+          onDoubleClick: () => header.column.resetSize(),
+          onMouseDown: header.getResizeHandler(),
+          onTouchStart: header.getResizeHandler(),
+          className: `resizer ${
+            header.column.getIsResizing() ? 'isResizing' : ''
+          }`,
+        }}
+      />
+      {/* resize controls finish */}
       <button {...attributes} {...listeners}>
         🟰
       </button>
@@ -238,32 +318,6 @@ const ShadcnTable = () => {
   )
 
   const [data, setData] = React.useState(() => getData())
-  console.log(data)
-
-  //These are the important styles to make sticky column pinning work!
-  //Apply styles like this using your CSS strategy of choice with this kind of logic to head cells, data cells, footer cells, etc.
-  //View the index.css file for more needed styles such as border-collapse: separate
-  const getCommonPinningStyles = (column: Column<any>): CSSProperties => {
-    const isPinned = column.getIsPinned()
-    const isLastLeftPinnedColumn =
-      isPinned === 'left' && column.getIsLastColumn('left')
-    const isFirstRightPinnedColumn =
-      isPinned === 'right' && column.getIsFirstColumn('right')
-
-    return {
-      boxShadow: isLastLeftPinnedColumn
-        ? '-4px 0 4px -4px gray inset'
-        : isFirstRightPinnedColumn
-        ? '4px 0 4px -4px gray inset'
-        : undefined,
-      left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
-      right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
-      opacity: isPinned ? 0.95 : 1,
-      position: isPinned ? 'sticky' : 'relative',
-      width: column.getSize(),
-      zIndex: isPinned ? 1 : 0,
-    }
-  }
 
   const [expanded, setExpanded] = React.useState<ExpandedState>(true)
   const [columnOrder, setColumnOrder] = React.useState<string[]>(() =>
@@ -345,84 +399,7 @@ const ShadcnTable = () => {
             width: table.getTotalSize(),
           }}
         >
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  const { column } = header
-                  return (
-                    <TableHead
-                      colSpan={header.colSpan}
-                      className="bg-white"
-                      key={header.id}
-                      style={{ ...getCommonPinningStyles(column) }}
-                    >
-                      <div className="whitespace-nowrap">
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}{' '}
-                        {/* Demo getIndex behavior */}
-                        {column.getIndex(column.getIsPinned() || 'center')}
-                      </div>
-                      {/* pin controls start */}
-                      {!header.isPlaceholder && header.column.getCanPin() && (
-                        <div className="flex gap-1 justify-center">
-                          {header.column.getIsPinned() !== 'left' ? (
-                            <button
-                              className="border rounded px-2"
-                              onClick={() => {
-                                header.column.pin('left')
-                              }}
-                            >
-                              {'<='}
-                            </button>
-                          ) : null}
-                          {header.column.getIsPinned() ? (
-                            <button
-                              className="border rounded px-2"
-                              onClick={() => {
-                                header.column.pin(false)
-                              }}
-                            >
-                              X
-                            </button>
-                          ) : null}
-                          {header.column.getIsPinned() !== 'right' ? (
-                            <button
-                              className="border rounded px-2"
-                              onClick={() => {
-                                header.column.pin('right')
-                              }}
-                            >
-                              {'=>'}
-                            </button>
-                          ) : null}
-                        </div>
-                      )}
-                      {/* pin controls finish */}
-
-                      {/* resize controls start */}
-                      <div
-                        {...{
-                          onDoubleClick: () => header.column.resetSize(),
-                          onMouseDown: header.getResizeHandler(),
-                          onTouchStart: header.getResizeHandler(),
-                          className: `resizer ${
-                            header.column.getIsResizing() ? 'isResizing' : ''
-                          }`,
-                        }}
-                      />
-                      {/* resize controls finish */}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          {/* 
+          
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => {
               return (
@@ -441,7 +418,6 @@ const ShadcnTable = () => {
               )
             })}
           </TableHeader> 
-*/}
           <TableBody>
             {table.getRowModel().rows.map((row) => {
               return (
@@ -453,7 +429,7 @@ const ShadcnTable = () => {
                         className="bg-white"
                         key={cell.id}
                         //IMPORTANT: pin feature!
-                        style={{ ...getCommonPinningStyles(column) }}
+                        style={{ ...getPinStyles(column) }}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
