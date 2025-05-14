@@ -347,6 +347,8 @@ const ShadcnTable = () => {
             width: table.getTotalSize(),
           }}
         >
+          
+{/*         
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => {
               return (
@@ -365,6 +367,7 @@ const ShadcnTable = () => {
               )
             })}
           </TableHeader>
+*/}
           <TableBody>
             {table.getRowModel().rows.map((row) => {
               return (
