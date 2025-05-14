@@ -332,8 +332,8 @@ const ShadcnTable = () => {
     data,
     columns,
     state: {
+      /* columnOrder: columnOrder, */
       expanded: expanded,
-      columnOrder: columnOrder,
     },
     onExpandedChange: setExpanded,
     getSubRows: (row) => row.subRows,
@@ -428,13 +428,11 @@ const ShadcnTable = () => {
               return (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => {
-                    const { column } = cell
+                  
                     return (
                       <TableCell
                         className="bg-white"
                         key={cell.id}
-                        //IMPORTANT: pin feature!
-                        style={{ ...getPinStyles(column) }}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
