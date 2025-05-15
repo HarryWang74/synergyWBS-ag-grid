@@ -1,6 +1,4 @@
 import React, { CSSProperties } from 'react'
-import { BsCaretRightFill } from 'react-icons/bs'
-import { BsCaretDownFill } from 'react-icons/bs'
 import {
   Column,
   Cell,
@@ -61,7 +59,7 @@ import {
 // needed for row & cell level scope DnD setup
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-
+import { TableStatus } from '@/models/dataTable'
 
 
  //These are the important styles to make sticky column pinning work!
@@ -177,6 +175,9 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   pathSubRows?: string
+  saveTableStatus?: (tableStatus: TableStatus) => void
+  deleteTableStatus?: () => void
+  initialState?: TableStatus
 }
 
 
@@ -184,8 +185,10 @@ export function ShadcnTable<TData, TValue>({
   columns,
   data,
   pathSubRows,
+  saveTableStatus,
+  initialState,
+  deleteTableStatus,
 }: DataTableProps<TData, TValue>) {
-  
   const [expanded, setExpanded] = React.useState<ExpandedState>(true)
   const [columnOrder, setColumnOrder] = React.useState<string[]>(() =>
     columns.map((c) => c.id!)
@@ -193,8 +196,9 @@ export function ShadcnTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
+    initialState: initialState,
     state: {
-      columnOrder: columnOrder, 
+      columnOrder: columnOrder,
       expanded: expanded,
     },
     onExpandedChange: setExpanded,
@@ -222,6 +226,12 @@ export function ShadcnTable<TData, TValue>({
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   )
+
+  function onSaveTableStatus() {
+    if (saveTableStatus) {
+      saveTableStatus(table.getState() as TableStatus)
+    }
+  }
 
   return (
     <div className="p-2">
@@ -337,6 +347,19 @@ export function ShadcnTable<TData, TValue>({
         </Pagination>
       </div>
       <div className="mt-4" />
+      <div>
+        <Button onClick={onSaveTableStatus}>save status</Button>
+        <Button
+          className='ml-2'
+          onClick={() => {
+            if (deleteTableStatus) {
+              deleteTableStatus()
+            }
+          }}  
+        >
+          delete status
+        </Button>
+      </div>
       <div>
         <b>Expanded State:</b> {JSON.stringify(expanded, null, 2)}
       </div>

@@ -3,24 +3,20 @@ import ShadcnTable from './ShadcnTable'
 import { BsCaretRightFill } from 'react-icons/bs'
 import { BsCaretDownFill } from 'react-icons/bs'
 import {
-  Column,
-  Cell,
-  ExpandedState,
-  useReactTable,
-  getCoreRowModel,
-  getExpandedRowModel,
   ColumnDef,
-  flexRender,
-  Header,
 } from '@tanstack/react-table'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getData } from '../data/shadcn-table-data'
-
+import { TableStatus } from '@/models/dataTable'
 
 const cultureCode = 'en-GB'
 const currencyCode = 'GBP'
 /* const cultureCode = 'en-US'
 const currencyCode = 'USD' */
+const initialState = (() => {
+    const stored = localStorage.getItem('projectBreakdownTableStatus')
+    return stored ? JSON.parse(stored) : {}
+})()
 
 export const formatCurrency = (amount: number | null) => {
   const value = amount || 0
@@ -38,9 +34,20 @@ export const formatDate = (date: Date) => {
   }).format(date)
 }
 
+const delTableStatus = () => {
+    localStorage.removeItem('projectBreakdownTableStatus')
+}
+
+const saveTableStatus = (tableStatus: TableStatus) => {
+  console.log('tableStatus', tableStatus)
+  localStorage.setItem(
+    'projectBreakdownTableStatus',
+    JSON.stringify(tableStatus)
+  )
+}
+
 function ProjectBreakdown() {
-    const columns = React.useMemo<ColumnDef<any>[]>(
-    () => [
+    const columns = React.useMemo<ColumnDef<any>[]>(() => [
       {
         accessorKey: 'wbs',
         id: 'wbs', // must have to support drag & drop
@@ -172,9 +179,12 @@ function ProjectBreakdown() {
   return (
     <div>
       <ShadcnTable
+        saveTableStatus={saveTableStatus}
         columns={columns}
         data={data}
         pathSubRows="subRows"
+        initialState={initialState}
+        deleteTableStatus={delTableStatus}
       ></ShadcnTable>
     </div>
   )
