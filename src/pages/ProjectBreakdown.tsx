@@ -49,6 +49,29 @@ const saveTableStatus = (tableStatus: TableStatus) => {
 function ProjectBreakdown() {
     const columns = React.useMemo<ColumnDef<any>[]>(() => [
       {
+        id: 'select',
+        header: ({ table }) => (
+          <input
+            type="checkbox"
+            checked={table.getIsAllPageRowsSelected()}
+            onChange={table.getToggleAllPageRowsSelectedHandler()}
+            aria-label="Select all"
+          />
+        ),
+        cell: ({ row }) => (
+          <input
+            type="checkbox"
+            checked={row.getIsSelected()}
+            disabled={!row.getCanSelect()}
+            onChange={row.getToggleSelectedHandler()}
+            aria-label="Select row"
+          />
+        ),
+        size: 48,
+        enableSorting: false,
+        enableHiding: false,
+      },
+      {
         accessorKey: 'wbs',
         id: 'wbs', // must have to support drag & drop
         header: ({}) => <>WBS</>,

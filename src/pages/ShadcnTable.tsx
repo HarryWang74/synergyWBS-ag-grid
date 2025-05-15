@@ -207,6 +207,7 @@ export function ShadcnTable<TData, TValue>({
     getExpandedRowModel: getExpandedRowModel(),
     columnResizeMode: 'onChange',
     onColumnOrderChange: setColumnOrder,
+    enableSubRowSelection: false,
   })
 
   // reorder columns after drag & drop
