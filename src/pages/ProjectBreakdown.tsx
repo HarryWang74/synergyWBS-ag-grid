@@ -2,9 +2,7 @@ import React from 'react'
 import ShadcnTable from './ShadcnTable'
 import { BsCaretRightFill } from 'react-icons/bs'
 import { BsCaretDownFill } from 'react-icons/bs'
-import {
-  ColumnDef,
-} from '@tanstack/react-table'
+import { ColumnDef, RowSelectionState } from '@tanstack/react-table'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getData } from '../data/shadcn-table-data'
 import { TableStatus } from '@/models/dataTable'
@@ -36,6 +34,10 @@ export const formatDate = (date: Date) => {
 
 const delTableStatus = () => {
     localStorage.removeItem('projectBreakdownTableStatus')
+}
+
+const onRowSelectChange = (rowSelectionState: RowSelectionState) => {
+  console.log('rowSelectionState', rowSelectionState)
 }
 
 const saveTableStatus = (tableStatus: TableStatus) => {
@@ -208,6 +210,7 @@ function ProjectBreakdown() {
         pathSubRows="subRows"
         initialState={initialState}
         deleteTableStatus={delTableStatus}
+        onRowSelectChange={onRowSelectChange}
       ></ShadcnTable>
     </div>
   )

@@ -9,6 +9,7 @@ import {
   ColumnDef,
   flexRender,
   Header,
+  RowSelectionState,
 } from '@tanstack/react-table'
 import './table.css'
 import {
@@ -60,6 +61,7 @@ import {
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { TableStatus } from '@/models/dataTable'
+import { on } from 'events'
 
 
  //These are the important styles to make sticky column pinning work!
@@ -178,6 +180,7 @@ interface DataTableProps<TData, TValue> {
   saveTableStatus?: (tableStatus: TableStatus) => void
   deleteTableStatus?: () => void
   initialState?: TableStatus
+  onRowSelectChange?: (rowSelectionState: RowSelectionState) => void
 }
 
 
@@ -188,11 +191,19 @@ export function ShadcnTable<TData, TValue>({
   saveTableStatus,
   initialState,
   deleteTableStatus,
+  onRowSelectChange,
 }: DataTableProps<TData, TValue>) {
   const [expanded, setExpanded] = React.useState<ExpandedState>(true)
   const [columnOrder, setColumnOrder] = React.useState<string[]>(() =>
     columns.map((c) => c.id!)
   )
+  //manage your own row selection state
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
+  
+  React.useEffect(() => {
+    onRowSelectChange?.(rowSelection)
+  }, [rowSelection])
+  
   const table = useReactTable({
     data,
     columns,
@@ -200,6 +211,7 @@ export function ShadcnTable<TData, TValue>({
     state: {
       columnOrder: columnOrder,
       expanded: expanded,
+      rowSelection,
     },
     onExpandedChange: setExpanded,
     getSubRows: pathSubRows ? (row: any) => row[pathSubRows] : undefined,
@@ -209,6 +221,8 @@ export function ShadcnTable<TData, TValue>({
     onColumnOrderChange: setColumnOrder,
     enableSubRowSelection: false,
     getRowId: (row) => row.id,
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
   })
 
   // reorder columns after drag & drop
@@ -348,8 +362,8 @@ export function ShadcnTable<TData, TValue>({
           </PaginationContent>
         </Pagination>
       </div>
-      
-    <div className="mt-4" />
+
+      <div className="mt-4" />
       <div>
         <Button onClick={onSaveTableStatus}>save status</Button>
         <Button
@@ -372,9 +386,8 @@ export function ShadcnTable<TData, TValue>({
           Trace table status
         </Button>
       </div>
-      <div className='mt-8'>
-        <b>Row Selection State:</b>{' '}
-        {JSON.stringify(table.getState().rowSelection, null, 2)}
+      <div className="mt-8">
+        <b>Row Selection State:</b>{JSON.stringify(rowSelection, null, 2)}
       </div>
       <div>
         <b>Expanded State:</b> {JSON.stringify(expanded, null, 2)}
