@@ -208,6 +208,7 @@ export function ShadcnTable<TData, TValue>({
     columnResizeMode: 'onChange',
     onColumnOrderChange: setColumnOrder,
     enableSubRowSelection: false,
+    getRowId: (row) => row.id,
   })
 
   // reorder columns after drag & drop
@@ -347,19 +348,33 @@ export function ShadcnTable<TData, TValue>({
           </PaginationContent>
         </Pagination>
       </div>
-      <div className="mt-4" />
+      
+    <div className="mt-4" />
       <div>
         <Button onClick={onSaveTableStatus}>save status</Button>
         <Button
-          className='ml-2'
+          className="ml-2"
           onClick={() => {
             if (deleteTableStatus) {
               deleteTableStatus()
             }
-          }}  
+          }}
         >
           delete status
         </Button>
+        <Button
+          className="ml-2"
+          onClick={() => {
+            // Log the current table state to the console
+            console.log(table.getState())
+          }}
+        >
+          Trace table status
+        </Button>
+      </div>
+      <div className='mt-8'>
+        <b>Row Selection State:</b>{' '}
+        {JSON.stringify(table.getState().rowSelection, null, 2)}
       </div>
       <div>
         <b>Expanded State:</b> {JSON.stringify(expanded, null, 2)}
