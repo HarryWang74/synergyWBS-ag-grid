@@ -5,9 +5,9 @@ import Layout from './Layout'
 import { 
   OneTableSolution, 
   MultiTableSolution,
-  ShadcnTable,
   DataTableDemo,
   Drag,
+  ProjectBreakdown,
 } from './pages'
 
 const router = createBrowserRouter([
@@ -17,7 +17,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'shadcn/',
-        element: <ShadcnTable />,
+        element: <ProjectBreakdown />,
       },
       {
         path: 'multi-table/',

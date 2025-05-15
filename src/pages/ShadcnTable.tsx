@@ -12,7 +12,6 @@ import {
   flexRender,
   Header,
 } from '@tanstack/react-table'
-import { getData } from '../data/shadcn-table-data'
 import './table.css'
 import {
   Table,
@@ -31,7 +30,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -63,26 +62,7 @@ import {
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
-const cultureCode = 'en-GB'
-const currencyCode = 'GBP'
-/* const cultureCode = 'en-US'
-const currencyCode = 'USD' */
 
-export const formatCurrency = (amount: number | null) => {
-  const value = amount || 0
-  return new Intl.NumberFormat(cultureCode, {
-    style: 'currency',
-    currency: currencyCode,
-  }).format(value)
-}
-
-export const formatDate = (date: Date) => {
-  return new Intl.DateTimeFormat(cultureCode, {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  }).format(date)
-}
 
  //These are the important styles to make sticky column pinning work!
   //Apply styles like this using your CSS strategy of choice with this kind of logic to head cells, data cells, footer cells, etc.
@@ -106,6 +86,7 @@ const getPinStyles = (column: Column<any>): CSSProperties => {
     position: isPinned ? 'sticky' : 'relative',
     width: column.getSize(),
     zIndex: isPinned ? 1 : 0,
+    backgroundColor: isPinned ? 'white' : undefined,
   }
 }
 
@@ -192,138 +173,19 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
   )
 }
 
-const ShadcnTable = () => {
-  const columns = React.useMemo<ColumnDef<any>[]>(
-    () => [
-      {
-        accessorKey: 'wbs',
-        id: 'wbs', // must have to support drag & drop
-        header: ({}) => <>WBS</>,
-        cell: ({ row, getValue }) => (
-          <div
-            style={{
-              // Since rows are flattened by default,
-              // we can use the row.depth property
-              // and paddingLeft to visually indicate the depth
-              // of the row
-              paddingLeft: `${row.depth * 2}rem`,
-            }}
-          >
-            <div>
-              {row.getCanExpand() ? (
-                <button
-                  {...{
-                    onClick: row.getToggleExpandedHandler(),
-                    style: { cursor: 'pointer' },
-                  }}
-                >
-                  {row.getIsExpanded() ? (
-                    <BsCaretDownFill />
-                  ) : (
-                    <BsCaretRightFill />
-                  )}
-                </button>
-              ) : null}
-              {getValue<boolean>()}
-            </div>
-          </div>
-        ),
-        size: 180,
-      },
-      {
-        accessorKey: 'name',
-        header: () => 'Name',
-        id: 'name',
-        size: 180,
-      },
-      {
-        accessorKey: 'status',
-        header: () => 'Status',
-        id: 'status',
-        size: 180,
-      },
-      {
-        accessorKey: 'startDate',
-        cell: ({ getValue }) => formatDate(getValue<Date>() ?? new Date()),
-        header: () => 'Start Date',
-        id: 'startDate',
-        size: 180,
-      },
-      {
-        accessorKey: 'endDate',
-        cell: ({ getValue }) => formatDate(getValue<Date>() ?? new Date()),
-        header: () => 'End Date',
-        id: 'endDate',
-        size: 180,
-      },
-      {
-        accessorKey: 'assigned',
-        header: () => 'Assigned',
-        id: 'assigned',
-        cell: ({ getValue }) => {
-          const assignee = getValue<any>()
-          return (
-            <div className="flex items-center gap-2">
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <span>{assignee}</span>
-            </div>
-          )
-        },
-      },
-      {
-        accessorKey: 'discipline',
-        header: () => 'Discipline',
-        id: 'discipline',
-        size: 180,
-      },
-      {
-        accessorKey: 'units',
-        header: () => 'Units',
-        id: 'units',
-        size: 180,
-      },
-      {
-        accessorKey: 'rate',
-        cell: ({ getValue }) => formatCurrency(getValue<number>()),
-        header: () => 'Rate',
-        id: 'rate',
-        size: 180,
-      },
-      {
-        accessorKey: 'budget',
-        cell: ({ getValue }) => formatCurrency(getValue<number>()),
-        header: () => 'Budget',
-        id: 'budget',
-        size: 180,
-      },
-      {
-        accessorKey: 'fee',
-        cell: ({ getValue }) => formatCurrency(getValue<number>()),
-        header: () => 'Fee',
-        id: 'fee',
-        size: 180,
-      },
-      {
-        accessorKey: 'used',
-        header: () => 'Used',
-        id: 'used',
-        size: 180,
-      },
-      {
-        accessorKey: 'notes',
-        header: () => 'Notes',
-        id: 'notes',
-        size: 180,
-      },
-    ],
-    []
-  )
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
+  pathSubRows?: string
+}
 
-  const [data, setData] = React.useState(() => getData())
 
+export function ShadcnTable<TData, TValue>({
+  columns,
+  data,
+  pathSubRows,
+}: DataTableProps<TData, TValue>) {
+  
   const [expanded, setExpanded] = React.useState<ExpandedState>(true)
   const [columnOrder, setColumnOrder] = React.useState<string[]>(() =>
     columns.map((c) => c.id!)
@@ -332,11 +194,11 @@ const ShadcnTable = () => {
     data,
     columns,
     state: {
-      /* columnOrder: columnOrder, */
+      columnOrder: columnOrder, 
       expanded: expanded,
     },
     onExpandedChange: setExpanded,
-    getSubRows: (row) => row.subRows,
+    getSubRows: pathSubRows ? (row: any) => row[pathSubRows] : undefined,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     columnResizeMode: 'onChange',
@@ -404,7 +266,6 @@ const ShadcnTable = () => {
             width: table.getTotalSize(),
           }}
         >
-          
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => {
               return (
@@ -422,17 +283,19 @@ const ShadcnTable = () => {
                 </TableRow>
               )
             })}
-          </TableHeader> 
+          </TableHeader>
           <TableBody>
             {table.getRowModel().rows.map((row) => {
               return (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => {
-                  
+                    const { column } = cell
                     return (
                       <TableCell
                         className="bg-white"
                         key={cell.id}
+                        //IMPORTANT: pin feature!
+                        style={{ ...getPinStyles(column) }}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
