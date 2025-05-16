@@ -278,6 +278,19 @@ export function ShadcnTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        <Button className="ml-2" onClick={onSaveTableStatus}>
+          Save table status
+        </Button>
+        <Button
+          className="ml-2"
+          onClick={() => {
+            if (deleteTableStatus) {
+              deleteTableStatus()
+            }
+          }}
+        >
+          Delete table status
+        </Button>
       </div>
       <div className="h-2" />
       <DndContext
@@ -365,17 +378,6 @@ export function ShadcnTable<TData, TValue>({
 
       <div className="mt-4" />
       <div>
-        <Button onClick={onSaveTableStatus}>save status</Button>
-        <Button
-          className="ml-2"
-          onClick={() => {
-            if (deleteTableStatus) {
-              deleteTableStatus()
-            }
-          }}
-        >
-          delete status
-        </Button>
         <Button
           className="ml-2"
           onClick={() => {
@@ -387,7 +389,8 @@ export function ShadcnTable<TData, TValue>({
         </Button>
       </div>
       <div className="mt-8">
-        <b>Row Selection State:</b>{JSON.stringify(rowSelection, null, 2)}
+        <b>Row Selection State:</b>
+        {JSON.stringify(rowSelection, null, 2)}
       </div>
       <div>
         <b>Expanded State:</b> {JSON.stringify(expanded, null, 2)}

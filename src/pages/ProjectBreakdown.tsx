@@ -15,21 +15,13 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { on } from 'events'
-
 
 const cultureCode = 'en-GB'
 const currencyCode = 'GBP'
 /* const cultureCode = 'en-US'
 const currencyCode = 'USD' */
-const initialState = (() => {
-    const stored = localStorage.getItem('projectBreakdownTableStatus')
-    return stored
-      ? JSON.parse(stored)
-      : { left: ['select', 'wbs'], right: ['actions'] }
-})()
 
-export const formatCurrency = (amount: number | null) => {
+const formatCurrency = (amount: number | null) => {
   const value = amount || 0
   return new Intl.NumberFormat(cultureCode, {
     style: 'currency',
@@ -37,7 +29,7 @@ export const formatCurrency = (amount: number | null) => {
   }).format(value)
 }
 
-export const formatDate = (date: Date) => {
+const formatDate = (date: Date) => {
   return new Intl.DateTimeFormat(cultureCode, {
     year: 'numeric',
     month: 'numeric',
@@ -49,7 +41,12 @@ function ProjectBreakdown() {
   const [selectedTasks, setSelectedTasks] = React.useState<any[]>([])
   const [selectedStages, setSelectedStages] = React.useState<any[]>([])
   const [selectedPhases, setSelectedPhases] = React.useState<any[]>([])
-
+  const initialState = (() => {
+    const stored = localStorage.getItem('projectBreakdownTableStatus')
+    return stored
+      ? JSON.parse(stored)
+      : { left: ['select', 'wbs'], right: ['actions'] }
+  })()
   const delTableStatus = () => {
     localStorage.removeItem('projectBreakdownTableStatus')
   }
