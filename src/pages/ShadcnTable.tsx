@@ -35,6 +35,9 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+  DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { ChevronDown } from 'lucide-react'
@@ -61,9 +64,8 @@ import {
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { TableStatus } from '@/models/dataTable'
-import { on } from 'events'
-
-
+import { HiMiniEllipsisVertical } from 'react-icons/hi2'
+import { LuPin } from 'react-icons/lu'
  //These are the important styles to make sticky column pinning work!
   //Apply styles like this using your CSS strategy of choice with this kind of logic to head cells, data cells, footer cells, etc.
   //View the index.css file for more needed styles such as border-collapse: separate
@@ -111,48 +113,12 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
     <TableHead
       colSpan={header.colSpan}
       ref={setNodeRef}
+      className="pr-6"
       style={{ ...style, ...getPinStyles(header.column) }}
     >
       {header.isPlaceholder
         ? null
         : flexRender(header.column.columnDef.header, header.getContext())}
-
-      {/* pin controls start */}
-      {!header.isPlaceholder && header.column.getCanPin() && (
-        <div className="flex gap-1 justify-center">
-          {header.column.getIsPinned() !== 'left' ? (
-            <button
-              className="border rounded px-2"
-              onClick={() => {
-                header.column.pin('left')
-              }}
-            >
-              {'<='}
-            </button>
-          ) : null}
-          {header.column.getIsPinned() ? (
-            <button
-              className="border rounded px-2"
-              onClick={() => {
-                header.column.pin(false)
-              }}
-            >
-              X
-            </button>
-          ) : null}
-          {header.column.getIsPinned() !== 'right' ? (
-            <button
-              className="border rounded px-2"
-              onClick={() => {
-                header.column.pin('right')
-              }}
-            >
-              {'=>'}
-            </button>
-          ) : null}
-        </div>
-      )}
-      {/* pin controls finish */}
 
       {/* resize controls start */}
       <div
@@ -166,9 +132,48 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
         }}
       />
       {/* resize controls finish */}
-      <button {...attributes} {...listeners}>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="h-8 w-8 p-0 absolute right-[10px] top-1"
+          >
+            <span className="sr-only">Open menu</span>
+            <HiMiniEllipsisVertical />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {/* pin start */}
+          <DropdownMenuLabel>
+            <LuPin className="mr-2 inline-block" />
+            Pin Column
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuCheckboxItem
+            checked={header.column.getIsPinned() === false}
+            onCheckedChange={() => header.column.pin(false)}
+          >
+            No Pin
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem
+            checked={header.column.getIsPinned() === 'left'}
+            onCheckedChange={() => header.column.pin('left')}
+          >
+            Pin Left
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem
+            checked={header.column.getIsPinned() === 'right'}
+            onCheckedChange={() => header.column.pin('right')}
+          >
+            Pin Right
+          </DropdownMenuCheckboxItem>
+          {/* pin finish */}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {/*       <button {...attributes} {...listeners}>
         🟰
-      </button>
+      </button> */}
     </TableHead>
   )
 }
