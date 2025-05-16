@@ -5,6 +5,7 @@ export function getData() {
       wbs: '1',
       name: 'Phase 1',
       id: 'phase_' + uuid(),
+      type: 'phase',
       subRows: [
         {
           wbs: '1.1',
@@ -21,6 +22,7 @@ export function getData() {
           used: 'CUS',
           notes: 2,
           id: 'stage_' + uuid(),
+          type: 'stage',
           subRows: [
             {
               wbs: '1.1.1',
@@ -31,6 +33,7 @@ export function getData() {
               assigned: 'Staff A',
               notes: 2,
               id: 'task_' + uuid(),
+              type: 'task',
             },
             {
               wbs: '1.1.2',
@@ -41,6 +44,7 @@ export function getData() {
               assigned: 'Staff A',
               notes: 2,
               id: 'task_' + uuid(),
+              type: 'task',
             },
           ],
         },
@@ -59,6 +63,7 @@ export function getData() {
           used: 'CUS',
           notes: 1,
           id: 'stage_' + uuid(),
+          type: 'stage',
           subRows: [
             {
               wbs: '1.2.1',
@@ -69,6 +74,7 @@ export function getData() {
               assigned: 'Staff B',
               notes: 1,
               id: 'task_' + uuid(),
+              type: 'task',
             },
             {
               wbs: '1.2.2',
@@ -79,6 +85,7 @@ export function getData() {
               assigned: 'Staff B',
               notes: 1,
               id: 'task_' + uuid(),
+              type: 'task',
             },
           ],
         },
