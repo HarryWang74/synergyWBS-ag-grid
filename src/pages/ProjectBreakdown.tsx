@@ -6,6 +6,17 @@ import { ColumnDef, RowSelectionState } from '@tanstack/react-table'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getData } from '../data/shadcn-table-data'
 import { TableStatus } from '@/models/dataTable'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { MoreHorizontal } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { on } from 'events'
+
 
 const cultureCode = 'en-GB'
 const currencyCode = 'GBP'
@@ -13,7 +24,9 @@ const currencyCode = 'GBP'
 const currencyCode = 'USD' */
 const initialState = (() => {
     const stored = localStorage.getItem('projectBreakdownTableStatus')
-    return stored ? JSON.parse(stored) : {}
+    return stored
+      ? JSON.parse(stored)
+      : { left: ['select', 'wbs'], right: ['actions'] }
 })()
 
 export const formatCurrency = (amount: number | null) => {
@@ -41,7 +54,17 @@ function ProjectBreakdown() {
     localStorage.removeItem('projectBreakdownTableStatus')
   }
 
+  const onActionEdit = (rowData: any) => {
+    console.log('onActionEdit', rowData)
+  }
 
+  const onActionDelete = (rowData: any) => {
+    console.log('onActionDelete', rowData)
+  }
+
+  const onDuplicate = (rowData: any) => {
+    console.log('onDuplicate', rowData)
+  }
 
   const saveTableStatus = (tableStatus: TableStatus) => {
     console.log('tableStatus', tableStatus)
@@ -51,7 +74,8 @@ function ProjectBreakdown() {
     )
   }
 
-  const columns = React.useMemo<ColumnDef<any>[]>(() => [
+  const columns = React.useMemo<ColumnDef<any>[]>(
+    () => [
       {
         id: 'select',
         header: ({ table }) => (
@@ -197,6 +221,35 @@ function ProjectBreakdown() {
         header: () => 'Notes',
         id: 'notes',
         size: 180,
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => {
+          const rowData = row.original
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onActionEdit(rowData)}>
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => onActionDelete(rowData)}>
+                  Delete
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => onDuplicate(rowData)}>
+                  Duplicate
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
       },
     ],
     []
