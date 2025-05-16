@@ -32,24 +32,26 @@ export const formatDate = (date: Date) => {
   }).format(date)
 }
 
-const delTableStatus = () => {
-    localStorage.removeItem('projectBreakdownTableStatus')
-}
-
-const onRowSelectChange = (rowSelectionState: RowSelectionState) => {
-  console.log('rowSelectionState', rowSelectionState)
-}
-
-const saveTableStatus = (tableStatus: TableStatus) => {
-  console.log('tableStatus', tableStatus)
-  localStorage.setItem(
-    'projectBreakdownTableStatus',
-    JSON.stringify(tableStatus)
-  )
-}
-
 function ProjectBreakdown() {
-    const columns = React.useMemo<ColumnDef<any>[]>(() => [
+  const [selectedTasks, setSelectedTasks] = React.useState<any[]>([])
+  const [selectedStages, setSelectedStages] = React.useState<any[]>([])
+  const [selectedPhases, setSelectedPhases] = React.useState<any[]>([])
+
+  const delTableStatus = () => {
+    localStorage.removeItem('projectBreakdownTableStatus')
+  }
+
+
+
+  const saveTableStatus = (tableStatus: TableStatus) => {
+    console.log('tableStatus', tableStatus)
+    localStorage.setItem(
+      'projectBreakdownTableStatus',
+      JSON.stringify(tableStatus)
+    )
+  }
+
+  const columns = React.useMemo<ColumnDef<any>[]>(() => [
       {
         id: 'select',
         header: ({ table }) => (
@@ -201,8 +203,50 @@ function ProjectBreakdown() {
   )
 
   const [data, setData] = React.useState(() => getData())
+
+  const onRowSelectChange = (rowSelectionState: RowSelectionState) => {
+    const selectedIds = Object.keys(rowSelectionState);
+    console.log('selectedIds', selectedIds)
+    
+    const selectedStagesData = data
+      .flatMap((item: any) => [item, ...(item.subRows || [])])
+      .filter((row: any) => selectedIds.includes(row.id) && row.id.startsWith('stage_'));
+    setSelectedStages(selectedStagesData);
+    
+    const selectedPhasesData = data
+      .flatMap((item: any) => [item, ...(item.subRows || [])])
+      .filter((row: any) => selectedIds.includes(row.id) && row.id.startsWith('phase_'));
+    setSelectedPhases(selectedPhasesData)
+
+    const selectedTaskData = data
+      .flatMap((item: any) =>
+        (item.subRows || []).flatMap((sub: any) => [
+          ...(sub.subRows || []).filter(
+            (row: any) => selectedIds.includes(row.id) && row.id.startsWith('task_')
+          ),
+        ])
+      );
+    setSelectedTasks(selectedTaskData)
+  }
+
+
   return (
     <div>
+      <div className="border-b border-i-border-color my-4">
+        <h1>Project breakdown</h1>
+        <div className="my-4">
+          <b>selected phases</b>
+          {JSON.stringify(selectedPhases, null, 2)}
+        </div>
+        <div className="my-4">
+          <b>selected stages</b>
+          {JSON.stringify(selectedStages, null, 2)}
+        </div>
+        <div className="my-4">
+          <b>selected tasks</b>
+          {JSON.stringify(selectedTasks, null, 2)}
+        </div>
+      </div>
       <ShadcnTable
         saveTableStatus={saveTableStatus}
         columns={columns}

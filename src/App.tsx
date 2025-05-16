@@ -16,7 +16,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        path: 'shadcn/',
+        index: true,
         element: <ProjectBreakdown />,
       },
       {
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
         element: <DataTableDemo />,
       },
       {
-        index: true,
+        path: 'onetable/',
         element: <OneTableSolution />,
       },
       {

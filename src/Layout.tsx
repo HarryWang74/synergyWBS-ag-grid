@@ -4,9 +4,9 @@ import Navbar from './components/Navbar';
 const Layout = () => {
   return (
     <div className="p-6">
-      <div>
+{/*   <div>
         <Navbar />
-      </div>
+      </div> */}
       <div className="h-[calc(100vh-200px)] overflow-auto">
         <Outlet />
       </div>
