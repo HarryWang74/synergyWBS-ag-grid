@@ -1,7 +1,6 @@
 import React, { CSSProperties } from 'react'
 import {
   Column,
-  Cell,
   ExpandedState,
   useReactTable,
   getCoreRowModel,
@@ -11,7 +10,6 @@ import {
   Header,
   RowSelectionState,
 } from '@tanstack/react-table'
-import './table.css'
 import {
   Table,
   TableBody,
@@ -126,7 +124,7 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
           onDoubleClick: () => header.column.resetSize(),
           onMouseDown: header.getResizeHandler(),
           onTouchStart: header.getResizeHandler(),
-          className: `resizer ${
+          className: `absolute h-[70%] top-[15%] w-[3px] bg-gray-200 right-[0px] hover:bg-gray-300 cursor-ew-resize ${
             header.column.getIsResizing() ? 'isResizing' : ''
           }`,
         }}
