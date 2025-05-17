@@ -103,7 +103,13 @@ const getPinStyles = (column: Column<unknown>): CSSProperties => {
 }
 
 
-const TableHeaderWapper = ({ header }: { header: Header<unknown, unknown> }) => {
+const TableHeaderWapper = ({
+  header,
+  table,
+}: {
+  header: Header<unknown, unknown>
+  table: any
+}) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } =
     useSortable({
       id: header.column.id,
@@ -112,7 +118,7 @@ const TableHeaderWapper = ({ header }: { header: Header<unknown, unknown> }) => 
   const style: CSSProperties = {
     opacity: isDragging ? 0.8 : 1,
     position: 'relative',
-    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
+    transform: CSS.Translate.toString(transform),
     transition: 'width transform 0.2s ease-in-out',
     whiteSpace: 'nowrap',
     width: header.column.getSize(),
@@ -120,7 +126,6 @@ const TableHeaderWapper = ({ header }: { header: Header<unknown, unknown> }) => 
   }
   const [openColumnsDialog, setOpenColumnsDialog] =
     React.useState<boolean>(false)
-  
 
   return (
     <TableHead
@@ -212,7 +217,11 @@ const TableHeaderWapper = ({ header }: { header: Header<unknown, unknown> }) => 
           <DialogHeader>
             <DialogTitle>Choose Columns</DialogTitle>
             <DialogDescription>
-              Toggle the visibility of columns in the table.
+              {table
+                .getAllColumns()
+                .map((column: Column <any, unknown>) => {
+                  return <div key={column.id}>{column.id}</div>
+                })}
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
@@ -342,7 +351,7 @@ export function ShadcnTable<TData, TValue>({
                   >
                     {headerGroup.headers.map((header) => {
                       return (
-                        <TableHeaderWapper key={header.id} header={header} />
+                        <TableHeaderWapper key={header.id} header={header} table={table} />
                       )
                     })}
                   </SortableContext>

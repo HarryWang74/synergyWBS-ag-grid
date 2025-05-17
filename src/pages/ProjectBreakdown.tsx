@@ -294,7 +294,7 @@ function ProjectBreakdown() {
                 <DropdownMenuItem onClick={() => onDuplicate(rowData)}>
                   Duplicate
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDuplicate(rowData)}>
+                <DropdownMenuItem onClick={() => onAdd(rowData)}>
                   Add new item
                 </DropdownMenuItem>
               </DropdownMenuContent>
