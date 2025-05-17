@@ -196,8 +196,6 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   pathSubRows?: string
-  saveTableStatus?: (tableStatus: TableStatus) => void
-  deleteTableStatus?: () => void
   initialState?: TableStatus
   onRowSelectChange?: (rowSelectionState: RowSelectionState) => void
 }
@@ -207,9 +205,7 @@ export function ShadcnTable<TData, TValue>({
   columns,
   data,
   pathSubRows,
-  saveTableStatus,
   initialState,
-  deleteTableStatus,
   onRowSelectChange,
 }: DataTableProps<TData, TValue>) {
   const [expanded, setExpanded] = React.useState<ExpandedState>(true)
@@ -262,11 +258,7 @@ export function ShadcnTable<TData, TValue>({
     useSensor(KeyboardSensor, {})
   )
 
-  function onSaveTableStatus() {
-    if (saveTableStatus) {
-      saveTableStatus(table.getState() as TableStatus)
-    }
-  }
+
 
   return (
     <div className="p-2">
@@ -297,19 +289,6 @@ export function ShadcnTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button className="ml-2" onClick={onSaveTableStatus}>
-          Save table status
-        </Button>
-        <Button
-          className="ml-2"
-          onClick={() => {
-            if (deleteTableStatus) {
-              deleteTableStatus()
-            }
-          }}
-        >
-          Delete table status
-        </Button>
       </div>
       <div className="h-2" />
       <DndContext

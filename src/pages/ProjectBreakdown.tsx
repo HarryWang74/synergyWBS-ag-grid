@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { HiMiniEllipsisVertical } from 'react-icons/hi2'
 
 const cultureCode = 'en-GB'
 const currencyCode = 'GBP'
@@ -41,8 +42,9 @@ function ProjectBreakdown() {
   const [selectedTasks, setSelectedTasks] = React.useState<any[]>([])
   const [selectedStages, setSelectedStages] = React.useState<any[]>([])
   const [selectedPhases, setSelectedPhases] = React.useState<any[]>([])
+  const storageKey = 'projectBreakdownTableStatus'
   const initialState = (() => {
-    const stored = localStorage.getItem('projectBreakdownTableStatus')
+    const stored = localStorage.getItem(storageKey)
 
     return stored
       ? JSON.parse(stored)
@@ -68,7 +70,7 @@ function ProjectBreakdown() {
         }
   })()
   const delTableStatus = () => {
-    localStorage.removeItem('projectBreakdownTableStatus')
+    localStorage.removeItem(storageKey)
   }
 
   const onActionEdit = (rowData: any) => {
@@ -91,7 +93,10 @@ function ProjectBreakdown() {
     console.log('tableStatus', tableStatus)
     localStorage.setItem(
       'projectBreakdownTableStatus',
-      JSON.stringify(tableStatus)
+      JSON.stringify({
+        columnPinning: tableStatus.columnPinning,
+        columnSizing: tableStatus.columnSizing,
+      })
     )
   }
 
@@ -246,6 +251,29 @@ function ProjectBreakdown() {
       },
       {
         id: 'actions',
+        header: ({ table }) => (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="h-8 w-8 p-0 absolute right-[10px] top-1"
+              >
+                <span className="sr-only">Open menu</span>
+                <HiMiniEllipsisVertical />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => saveTableStatus(table.getState() as TableStatus)}
+              >
+                Save table status
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => delTableStatus()}>
+                Delete table status
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
         cell: ({ row }) => {
           const rowData = row.original
           return (
@@ -325,14 +353,12 @@ function ProjectBreakdown() {
         </div>
       </div>
       <ShadcnTable
-        saveTableStatus={saveTableStatus}
         columns={columns}
         data={data}
         pathSubRows="subRows"
         initialState={initialState}
-        deleteTableStatus={delTableStatus}
         onRowSelectChange={onRowSelectChange}
-      ></ShadcnTable>
+      />
     </div>
   )
 }
