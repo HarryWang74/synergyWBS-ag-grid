@@ -236,13 +236,14 @@ function ProjectBreakdown() {
                 <DropdownMenuItem onClick={() => onActionEdit(rowData)}>
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => onActionDelete(rowData)}>
                   Delete
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => onDuplicate(rowData)}>
                   Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  Add new item
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
