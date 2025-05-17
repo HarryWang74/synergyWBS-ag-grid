@@ -43,9 +43,29 @@ function ProjectBreakdown() {
   const [selectedPhases, setSelectedPhases] = React.useState<any[]>([])
   const initialState = (() => {
     const stored = localStorage.getItem('projectBreakdownTableStatus')
+
     return stored
       ? JSON.parse(stored)
-      : { left: ['select', 'wbs'], right: ['actions'] }
+      : {
+          columnPinning: { left: ['select', 'wbs'], right: ['actions'] },
+          columnVisibility: {
+            select: true,
+            wbs: true,
+            name: true,
+            status: true,
+            startDate: true,
+            endDate: true,
+            assigned: true,
+            discipline: true,
+            units: true,
+            rate: true,
+            budget: true,
+            fee: true,
+            used: true,
+            notes: true,
+            actions: true,
+          },
+        }
   })()
   const delTableStatus = () => {
     localStorage.removeItem('projectBreakdownTableStatus')
@@ -71,6 +91,7 @@ function ProjectBreakdown() {
     )
   }
 
+  
   const columns = React.useMemo<ColumnDef<any>[]>(
     () => [
       {
