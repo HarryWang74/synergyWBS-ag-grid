@@ -64,6 +64,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { TableStatus } from '@/models/dataTable'
 import { HiMiniEllipsisVertical } from 'react-icons/hi2'
 import { LuPin } from 'react-icons/lu'
+import { RiResetLeftLine } from 'react-icons/ri'
  //These are the important styles to make sticky column pinning work!
   //Apply styles like this using your CSS strategy of choice with this kind of logic to head cells, data cells, footer cells, etc.
   //View the index.css file for more needed styles such as border-collapse: separate
@@ -116,10 +117,10 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
         ...style,
         ...getPinStyles(header.column),
         boxShadow: 'none !important',
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#f5f5f5', // quick fix
       }}
     >
-       <span {...attributes} {...listeners} className="hover: cursor-move">
+      <span {...attributes} {...listeners} className="hover: cursor-move">
         {header.isPlaceholder
           ? null
           : flexRender(header.column.columnDef.header, header.getContext())}
@@ -129,7 +130,6 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
       {header.column.id !== 'actions' && header.column.id !== 'select' && (
         <div
           {...{
-            onDoubleClick: () => header.column.resetSize(),
             onMouseDown: header.getResizeHandler(),
             onTouchStart: header.getResizeHandler(),
             className: `absolute h-[70%] top-[15%] w-[3px] bg-gray-200 right-[0px] hover:bg-gray-300 cursor-ew-resize ${
@@ -179,6 +179,10 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
               Pin Right
             </DropdownMenuCheckboxItem>
             {/* pin finish */}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => header.column.resetSize()}>
+              <RiResetLeftLine />Reset Columns
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}
