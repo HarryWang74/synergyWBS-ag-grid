@@ -75,7 +75,6 @@ function ProjectBreakdown() {
     () => [
       {
         id: 'select',
-
         header: ({ table }) => (
           <input
             type="checkbox"

@@ -116,13 +116,14 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
         ...style,
         ...getPinStyles(header.column),
         boxShadow: 'none !important',
+        backgroundColor: '#f5f5f5',
       }}
-      {...attributes}
-      {...listeners}
     >
-      {header.isPlaceholder
-        ? null
-        : flexRender(header.column.columnDef.header, header.getContext())}
+       <span {...attributes} {...listeners} className="hover: cursor-move">
+        {header.isPlaceholder
+          ? null
+          : flexRender(header.column.columnDef.header, header.getContext())}
+      </span>
 
       {/* resize controls start */}
       {header.column.id !== 'actions' && header.column.id !== 'select' && (
