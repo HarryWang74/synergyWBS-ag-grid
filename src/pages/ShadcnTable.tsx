@@ -1,3 +1,4 @@
+"client side"
 import React, { CSSProperties } from 'react'
 import {
   Column,
@@ -215,13 +216,9 @@ const TableHeaderWapper = ({
       <Dialog open={openColumnsDialog} onOpenChange={setOpenColumnsDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Choose Columns</DialogTitle>
+            <DialogTitle>Column List</DialogTitle>
             <DialogDescription>
-              {table
-                .getAllColumns()
-                .map((column: Column <any, unknown>) => {
-                  return <div key={column.id}>{column.id}</div>
-                })}
+  
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
