@@ -65,10 +65,21 @@ import { TableStatus } from '@/models/dataTable'
 import { HiMiniEllipsisVertical } from 'react-icons/hi2'
 import { LuPin } from 'react-icons/lu'
 import { RiResetLeftLine } from 'react-icons/ri'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+
+
+
  //These are the important styles to make sticky column pinning work!
   //Apply styles like this using your CSS strategy of choice with this kind of logic to head cells, data cells, footer cells, etc.
   //View the index.css file for more needed styles such as border-collapse: separate
-const getPinStyles = (column: Column<any>): CSSProperties => {
+const getPinStyles = (column: Column<unknown>): CSSProperties => {
   const isPinned = column.getIsPinned()
   const isLastLeftPinnedColumn =
     isPinned === 'left' && column.getIsLastColumn('left')
@@ -92,7 +103,7 @@ const getPinStyles = (column: Column<any>): CSSProperties => {
 }
 
 
-const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
+const TableHeaderWapper = ({ header }: { header: Header<unknown, unknown> }) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } =
     useSortable({
       id: header.column.id,
@@ -107,6 +118,9 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
     width: header.column.getSize(),
     zIndex: isDragging ? 1 : 0,
   }
+  const [openColumnsDialog, setOpenColumnsDialog] =
+    React.useState<boolean>(false)
+  
 
   return (
     <TableHead
@@ -179,7 +193,12 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => header.column.resetSize()}>
                 <RiResetLeftLine />
-                Reset Columns
+                Reset Column
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setOpenColumnsDialog(true)}>
+                <RiResetLeftLine />
+                Choose Columns
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -188,6 +207,16 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
         // no feature headers
         flexRender(header.column.columnDef.header, header.getContext())
       )}
+      <Dialog open={openColumnsDialog} onOpenChange={setOpenColumnsDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Choose Columns</DialogTitle>
+            <DialogDescription>
+              Toggle the visibility of columns in the table.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </TableHead>
   )
 }
