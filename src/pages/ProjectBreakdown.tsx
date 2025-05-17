@@ -83,6 +83,10 @@ function ProjectBreakdown() {
     console.log('onDuplicate', rowData)
   }
 
+  const onAdd = (rowData: any) => {
+    console.log('onAdd', rowData)
+  }
+
   const saveTableStatus = (tableStatus: TableStatus) => {
     console.log('tableStatus', tableStatus)
     localStorage.setItem(
@@ -262,7 +266,7 @@ function ProjectBreakdown() {
                 <DropdownMenuItem onClick={() => onDuplicate(rowData)}>
                   Duplicate
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onDuplicate(rowData)}>
                   Add new item
                 </DropdownMenuItem>
               </DropdownMenuContent>

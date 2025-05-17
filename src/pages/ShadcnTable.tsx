@@ -120,7 +120,8 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
         backgroundColor: '#f5f5f5', // quick fix
       }}
     >
-      {header.column.id !== 'actions' && header.column.id !== 'select' && (
+      {/* may need to figure out a better solution */}
+      {header.column.id !== 'actions' && header.column.id !== 'select' ? (
         <>
           {/* drag control */}
           <span {...attributes} {...listeners} className="hover: cursor-move">
@@ -138,56 +139,54 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
               }`,
             }}
           />
+          {/* header drop down */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="h-8 w-8 p-0 absolute right-[10px] top-1"
+              >
+                <span className="sr-only">Open menu</span>
+                <HiMiniEllipsisVertical />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {/* pin start */}
+              <DropdownMenuLabel>
+                <LuPin className="mr-2 inline-block" />
+                Pin Column
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuCheckboxItem
+                checked={header.column.getIsPinned() === false}
+                onCheckedChange={() => header.column.pin(false)}
+              >
+                No Pin
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={header.column.getIsPinned() === 'left'}
+                onCheckedChange={() => header.column.pin('left')}
+              >
+                Pin Left
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={header.column.getIsPinned() === 'right'}
+                onCheckedChange={() => header.column.pin('right')}
+              >
+                Pin Right
+              </DropdownMenuCheckboxItem>
+              {/* pin finish */}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => header.column.resetSize()}>
+                <RiResetLeftLine />
+                Reset Columns
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </>
-      )}
-
-      {/* resize controls finish */}
-
-      {/* may need to figure out a better solution to hide content */}
-      {header.column.id !== 'actions' && header.column.id !== 'select' && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="h-8 w-8 p-0 absolute right-[10px] top-1"
-            >
-              <span className="sr-only">Open menu</span>
-              <HiMiniEllipsisVertical />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {/* pin start */}
-            <DropdownMenuLabel>
-              <LuPin className="mr-2 inline-block" />
-              Pin Column
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuCheckboxItem
-              checked={header.column.getIsPinned() === false}
-              onCheckedChange={() => header.column.pin(false)}
-            >
-              No Pin
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={header.column.getIsPinned() === 'left'}
-              onCheckedChange={() => header.column.pin('left')}
-            >
-              Pin Left
-            </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem
-              checked={header.column.getIsPinned() === 'right'}
-              onCheckedChange={() => header.column.pin('right')}
-            >
-              Pin Right
-            </DropdownMenuCheckboxItem>
-            {/* pin finish */}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => header.column.resetSize()}>
-              <RiResetLeftLine />
-              Reset Columns
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      ) : header.isPlaceholder ? null : (
+        // no feature headers
+        flexRender(header.column.columnDef.header, header.getContext())
       )}
     </TableHead>
   )
