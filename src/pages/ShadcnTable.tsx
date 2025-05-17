@@ -120,23 +120,25 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
         backgroundColor: '#f5f5f5', // quick fix
       }}
     >
-      <span {...attributes} {...listeners} className="hover: cursor-move">
-        {header.isPlaceholder
-          ? null
-          : flexRender(header.column.columnDef.header, header.getContext())}
-      </span>
-
-      {/* resize controls start */}
       {header.column.id !== 'actions' && header.column.id !== 'select' && (
-        <div
-          {...{
-            onMouseDown: header.getResizeHandler(),
-            onTouchStart: header.getResizeHandler(),
-            className: `absolute h-[70%] top-[15%] w-[3px] bg-gray-200 right-[0px] hover:bg-gray-300 cursor-ew-resize ${
-              header.column.getIsResizing() ? 'isResizing' : ''
-            }`,
-          }}
-        />
+        <>
+          {/* drag control */}
+          <span {...attributes} {...listeners} className="hover: cursor-move">
+            {header.isPlaceholder
+              ? null
+              : flexRender(header.column.columnDef.header, header.getContext())}
+          </span>
+          {/* resize controls */}
+          <div
+            {...{
+              onMouseDown: header.getResizeHandler(),
+              onTouchStart: header.getResizeHandler(),
+              className: `absolute h-[70%] top-[15%] w-[3px] bg-gray-200 right-[0px] hover:bg-gray-300 cursor-ew-resize ${
+                header.column.getIsResizing() ? 'isResizing' : ''
+              }`,
+            }}
+          />
+        </>
       )}
 
       {/* resize controls finish */}
@@ -181,7 +183,8 @@ const TableHeaderWapper = ({ header }: { header: Header<any, unknown> }) => {
             {/* pin finish */}
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => header.column.resetSize()}>
-              <RiResetLeftLine />Reset Columns
+              <RiResetLeftLine />
+              Reset Columns
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
