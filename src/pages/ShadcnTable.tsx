@@ -298,23 +298,31 @@ export function ShadcnTable<TData, TValue>({
           <DialogHeader>
             <DialogTitle>Column List</DialogTitle>
             <DialogDescription>
-    
-                {table
-                  .getAllColumns()
-                  .filter((column: Column<any, unknown>) => column.getCanHide())
-                  .map((column: Column<any, unknown>) => {
-                    return (
-                      <span key={column.id} className="p-2 block">
-                        <input
-                          type="checkbox"
-                          checked={column.getIsVisible()}
-                          onChange={() => column.toggleVisibility()}
-                        />
-                        {column.id}
-                      </span>
-                    )
-                  })}
-  
+              <input
+              placeholder="Filter columns..."
+              value={table.getState().globalFilter ?? ""}
+              onChange={e => table.setGlobalFilter?.(e.target.value)}
+              className="mb-2 p-1 border rounded w-full"
+              />
+              {
+              table
+                .getAllColumns()
+                .filter((column: Column<any, unknown>) => {
+                const keyword = table.getState().globalFilter?.toLowerCase() || "";
+                return column.getCanHide() && column.id.toLowerCase().includes(keyword);
+                })
+                .map((column: Column<any, unknown>) => {
+                return (
+                  <span key={column.id} className="p-2 block">
+                  <input
+                    type="checkbox"
+                    checked={column.getIsVisible()}
+                    onChange={() => column.toggleVisibility()}
+                  />
+                  {column.id}
+                  </span>
+                )
+                })}
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
