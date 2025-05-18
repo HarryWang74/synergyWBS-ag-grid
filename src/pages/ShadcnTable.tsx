@@ -107,9 +107,13 @@ const getPinStyles = (column: Column<unknown>): CSSProperties => {
 const TableHeaderWapper = ({
   header,
   table,
+  openColumnsDialog,
+  setOpenColumnsDialog,
 }: {
   header: Header<unknown, unknown>
   table: any
+  openColumnsDialog: boolean
+  setOpenColumnsDialog: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } =
     useSortable({
@@ -125,7 +129,6 @@ const TableHeaderWapper = ({
     width: header.column.getSize(),
     zIndex: isDragging ? 1 : 0,
   }
-  
 
   return (
     <TableHead
@@ -196,16 +199,16 @@ const TableHeaderWapper = ({
               </DropdownMenuCheckboxItem>
               {/* pin finish */}
               <DropdownMenuSeparator />
-                <DropdownMenuItem
+              <DropdownMenuItem
                 onClick={() => {
                   table.resetColumnSizing()
                 }}
-                >
+              >
                 <RiResetLeftLine />
                 Reset Columns
-                </DropdownMenuItem>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setOpenColumnsDialog(!openColumnsDialog)}>
                 <RiResetLeftLine />
                 Choose Columns
               </DropdownMenuItem>
@@ -216,7 +219,6 @@ const TableHeaderWapper = ({
         // no feature headers
         flexRender(header.column.columnDef.header, header.getContext())
       )}
-      
     </TableHead>
   )
 }
@@ -246,7 +248,7 @@ export function ShadcnTable<TData, TValue>({
   //manage your own row selection state
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
   const [openColumnsDialog, setOpenColumnsDialog] =
-    React.useState<boolean>(true)
+    React.useState<boolean>(false)
   React.useEffect(() => {
     onRowSelectChange?.(rowSelection)
   }, [rowSelection])
@@ -295,33 +297,46 @@ export function ShadcnTable<TData, TValue>({
   return (
     <div className="p-2">
       {openColumnsDialog && (
-        <div className="fixed top-[100px] left-[100px] bg-white shadow-lg max-h-[300px] w-64 overflow-y-auto z-50 p-4 rounded">
+        <div className="fixed top-[100px] left-[100px] bg-white shadow-lg z-50 p-4 rounded">
+          <div className="py-4 flex items-center justify-between">
+            <span>Choose columns</span>
+            <button
+              className="ml-auto px-2 py-1 text-gray-500 hover:text-gray-700"
+              onClick={() => setOpenColumnsDialog(false)}
+            >
+              X
+            </button>
+          </div>
           <input
             placeholder="Filter columns..."
             value={table.getState().globalFilter ?? ''}
             onChange={(e) => table.setGlobalFilter?.(e.target.value)}
             className="mb-2 p-1 border rounded w-full"
           />
-          {table
-            .getAllColumns()
-            .filter((column: Column<any, unknown>) => {
-              const keyword = table.getState().globalFilter?.toLowerCase() || ''
-              return (
-                column.getCanHide() && column.id.toLowerCase().includes(keyword)
-              )
-            })
-            .map((column: Column<any, unknown>) => {
-              return (
-                <span key={column.id} className="p-2 block">
-                  <input
-                    type="checkbox"
-                    checked={column.getIsVisible()}
-                    onChange={() => column.toggleVisibility()}
-                  />
-                  {column.id}
-                </span>
-              )
-            })}
+          <div className="max-h-[300px] w-64 overflow-y-auto">
+            {table
+              .getAllColumns()
+              .filter((column: Column<any, unknown>) => {
+                const keyword =
+                  table.getState().globalFilter?.toLowerCase() || ''
+                return (
+                  column.getCanHide() &&
+                  column.id.toLowerCase().includes(keyword)
+                )
+              })
+              .map((column: Column<any, unknown>) => {
+                return (
+                  <span key={column.id} className="p-2 block">
+                    <input
+                      type="checkbox"
+                      checked={column.getIsVisible()}
+                      onChange={() => column.toggleVisibility()}
+                    />
+                    {column.id}
+                  </span>
+                )
+              })}
+          </div>
         </div>
       )}
 
@@ -377,6 +392,8 @@ export function ShadcnTable<TData, TValue>({
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHeaderWapper
+                          openColumnsDialog={openColumnsDialog}
+                          setOpenColumnsDialog={setOpenColumnsDialog}
                           key={header.id}
                           header={header}
                           table={table}
