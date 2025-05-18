@@ -51,14 +51,19 @@ import {
   type DragEndEvent,
   useSensor,
   useSensors,
+  useDraggable,
+  useDroppable,
 } from '@dnd-kit/core'
-import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
+import {
+  restrictToHorizontalAxis,
+  restrictToWindowEdges,
+} from '@dnd-kit/modifiers'
 import {
   arrayMove,
   SortableContext,
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable'
-
+import type { Coordinates } from '@dnd-kit/utilities'
 // needed for row & cell level scope DnD setup
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -291,11 +296,52 @@ export function ShadcnTable<TData, TValue>({
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   )
+  const [position, setPosition] = React.useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  })
+  
+  function Draggable({ x, y }: { x: number; y: number }) {
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({
+      id: 'draggable',
+    })
+    const style = {
+      transform: CSS.Translate.toString(transform),
+    }
 
-
+    return (
+      <button
+        ref={setNodeRef}
+        style={{
+          ...style,
+          position: 'fixed',
+          left: x,
+          top: y,
+          zIndex: 1000,
+        }}
+        {...listeners}
+        {...attributes}
+      >
+        <h1>1234 {`x: ${x}, y: ${y}`}</h1>
+      </button>
+    )
+  }
 
   return (
     <div className="p-2">
+      <DndContext
+        onDragEnd={({ delta }) => {
+          setPosition((currentPosition) => {
+            const newX = currentPosition.x + delta.x
+            const newY = currentPosition.y + delta.y
+
+            return { x: newX, y: newY }
+          })
+        }}
+      >
+        <Draggable x={position.x} y={position.y} />
+      </DndContext>
+
       {openColumnsDialog && (
         <div className="fixed top-[100px] left-[100px] bg-white shadow-lg z-50 p-4 rounded">
           <div className="py-4 flex items-center justify-between">
@@ -339,7 +385,6 @@ export function ShadcnTable<TData, TValue>({
           </div>
         </div>
       )}
-
       <div className="flex items-center py-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -457,7 +502,6 @@ export function ShadcnTable<TData, TValue>({
           </PaginationContent>
         </Pagination>
       </div>
-
       <div className="mt-4" />
       <div>
         <Button
