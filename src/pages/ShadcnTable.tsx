@@ -213,31 +213,7 @@ const TableHeaderWapper = ({
         // no feature headers
         flexRender(header.column.columnDef.header, header.getContext())
       )}
-      <Dialog open={openColumnsDialog} onOpenChange={setOpenColumnsDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Column List</DialogTitle>
-            <DialogDescription>
-              <div>
-                {table.getAllColumns()
-              .filter((column: Column<any, unknown>) => column.getCanHide())
-              .map((column: Column<any, unknown>) => {
-                  return (
-                    <div key={column.id} className='p-2'>
-                      <input
-                        type="checkbox"
-                        checked={column.getIsVisible()}
-                        onChange={() => column.toggleVisibility()}
-                      />
-                      {column.id}
-                    </div>
-                  )
-                })}
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      
     </TableHead>
   )
 }
@@ -249,6 +225,8 @@ interface DataTableProps<TData, TValue> {
   initialState?: TableStatus
   onRowSelectChange?: (rowSelectionState: RowSelectionState) => void
 }
+
+
 
 
 export function ShadcnTable<TData, TValue>({
@@ -312,6 +290,35 @@ export function ShadcnTable<TData, TValue>({
 
   return (
     <div className="p-2">
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Edit Profile</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Column List</DialogTitle>
+            <DialogDescription>
+    
+                {table
+                  .getAllColumns()
+                  .filter((column: Column<any, unknown>) => column.getCanHide())
+                  .map((column: Column<any, unknown>) => {
+                    return (
+                      <span key={column.id} className="p-2 block">
+                        <input
+                          type="checkbox"
+                          checked={column.getIsVisible()}
+                          onChange={() => column.toggleVisibility()}
+                        />
+                        {column.id}
+                      </span>
+                    )
+                  })}
+  
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
       <div className="flex items-center py-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -363,7 +370,11 @@ export function ShadcnTable<TData, TValue>({
                   >
                     {headerGroup.headers.map((header) => {
                       return (
-                        <TableHeaderWapper key={header.id} header={header} table={table} />
+                        <TableHeaderWapper
+                          key={header.id}
+                          header={header}
+                          table={table}
+                        />
                       )
                     })}
                   </SortableContext>
