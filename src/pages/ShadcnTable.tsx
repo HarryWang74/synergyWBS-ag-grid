@@ -197,10 +197,14 @@ const TableHeaderWapper = ({
               </DropdownMenuCheckboxItem>
               {/* pin finish */}
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => header.column.resetSize()}>
+                <DropdownMenuItem
+                onClick={() => {
+                  table.resetColumnSizing()
+                }}
+                >
                 <RiResetLeftLine />
-                Reset Column
-              </DropdownMenuItem>
+                Reset Columns
+                </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setOpenColumnsDialog(true)}>
                 <RiResetLeftLine />
