@@ -310,7 +310,7 @@ export function ShadcnTable<TData, TValue>({
     }
 
     return (
-      <button
+      <div
         ref={setNodeRef}
         style={{
           ...style,
@@ -319,11 +319,12 @@ export function ShadcnTable<TData, TValue>({
           top: y,
           zIndex: 1000,
         }}
-        {...listeners}
-        {...attributes}
       >
-        <h1>1234 {`x: ${x}, y: ${y}`}</h1>
-      </button>
+        <input></input>
+        <h1 {...listeners} {...attributes}>
+          1234 {`x: ${x}, y: ${y}`}
+        </h1>
+      </div>
     )
   }
 
