@@ -125,6 +125,7 @@ function ProjectBreakdown() {
         size: 48,
         enableSorting: false,
         enableHiding: false,
+        noFeatureHeader: true,
       },
       {
         accessorKey: 'wbs',
@@ -302,6 +303,9 @@ function ProjectBreakdown() {
           )
         },
         size: 60,
+        enableSorting: false,
+        enableHiding: false,
+        noFeatureHeader: true,
       },
     ],
     []

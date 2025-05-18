@@ -218,7 +218,22 @@ const TableHeaderWapper = ({
           <DialogHeader>
             <DialogTitle>Column List</DialogTitle>
             <DialogDescription>
-  
+              <div>
+                {table.getAllColumns()
+              .filter((column: Column<any, unknown>) => column.getCanHide())
+              .map((column: Column<any, unknown>) => {
+                  return (
+                    <div key={column.id} className='p-2'>
+                      <input
+                        type="checkbox"
+                        checked={column.getIsVisible()}
+                        onChange={() => column.toggleVisibility()}
+                      />
+                      {column.id}
+                    </div>
+                  )
+                })}
+              </div>
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
