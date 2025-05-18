@@ -71,14 +71,7 @@ import { TableStatus } from '@/models/dataTable'
 import { HiMiniEllipsisVertical } from 'react-icons/hi2'
 import { LuPin } from 'react-icons/lu'
 import { RiResetLeftLine } from 'react-icons/ri'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+import { cn } from '@/lib/utils'
 
 
 
@@ -343,8 +336,13 @@ export function ShadcnTable<TData, TValue>({
         <Draggable x={position.x} y={position.y} />
       </DndContext>
 
-      {openColumnsDialog && (
-        <div className="fixed top-[100px] left-[100px] bg-white shadow-lg z-50 p-4 rounded">
+        {/* columns dialog */}
+        <div
+          className={cn(
+            "fixed top-[100px] left-[100px] bg-white shadow-lg z-50 p-4 rounded",
+            !openColumnsDialog && "hidden"
+          )}
+        >
           <div className="py-4 flex items-center justify-between">
             <span>Choose columns</span>
             <button
@@ -364,28 +362,29 @@ export function ShadcnTable<TData, TValue>({
             {table
               .getAllColumns()
               .filter((column: Column<any, unknown>) => {
-                const keyword =
-                  table.getState().globalFilter?.toLowerCase() || ''
-                return (
-                  column.getCanHide() &&
-                  column.id.toLowerCase().includes(keyword)
-                )
+          const keyword =
+            table.getState().globalFilter?.toLowerCase() || ''
+          return (
+            column.getCanHide() &&
+            column.id.toLowerCase().includes(keyword)
+          )
               })
               .map((column: Column<any, unknown>) => {
-                return (
-                  <span key={column.id} className="p-2 block">
-                    <input
-                      type="checkbox"
-                      checked={column.getIsVisible()}
-                      onChange={() => column.toggleVisibility()}
-                    />
-                    {column.id}
-                  </span>
-                )
+          return (
+            <span key={column.id} className="p-2 block">
+              <input
+                type="checkbox"
+                className='mr-2'
+                checked={column.getIsVisible()}
+                onChange={() => column.toggleVisibility()}
+              />
+              {column.id}
+            </span>
+          )
               })}
           </div>
         </div>
-      )}
+ 
       <div className="flex items-center py-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
