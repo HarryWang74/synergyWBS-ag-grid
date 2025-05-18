@@ -96,6 +96,7 @@ function ProjectBreakdown() {
       JSON.stringify({
         columnPinning: tableStatus.columnPinning,
         columnSizing: tableStatus.columnSizing,
+        columnVisibility: tableStatus.columnVisibility,
       })
     )
   }

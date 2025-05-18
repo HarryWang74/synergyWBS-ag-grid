@@ -72,7 +72,7 @@ import { HiMiniEllipsisVertical } from 'react-icons/hi2'
 import { LuPin } from 'react-icons/lu'
 import { RiResetLeftLine } from 'react-icons/ri'
 import { cn } from '@/lib/utils'
-
+import { CiViewColumn } from 'react-icons/ci'
 
 
  //These are the important styles to make sticky column pinning work!
@@ -206,8 +206,10 @@ const TableHeaderWapper = ({
                 Reset Columns
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setOpenColumnsDialog(!openColumnsDialog)}>
-                <RiResetLeftLine />
+              <DropdownMenuItem
+                onClick={() => setOpenColumnsDialog(!openColumnsDialog)}
+              >
+                <CiViewColumn />
                 Choose Columns
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -250,6 +252,13 @@ export function ShadcnTable<TData, TValue>({
   React.useEffect(() => {
     onRowSelectChange?.(rowSelection)
   }, [rowSelection])
+
+  React.useEffect(() => {
+    const el = document.getElementById('columns-dialog')
+    if (el) {
+      dragElement(el)
+    }
+  }, [])
   
   const table = useReactTable({
     data,
@@ -293,6 +302,56 @@ export function ShadcnTable<TData, TValue>({
     x: 0,
     y: 0,
   })
+
+  // quick fix for drag column dialog, use dndkit when drag the input can not get focus
+  // have to move to make drag handler can not make whole div dragable
+  function dragElement(elmnt: HTMLElement) {
+    var pos1 = 0,
+      pos2 = 0,
+      pos3 = 0,
+      pos4 = 0
+    
+    const headerElement = document.getElementById(elmnt.id)
+
+    if (headerElement) {
+      // if present, the header is where you move the DIV from:
+      headerElement.onmousedown = dragMouseDown
+    } 
+
+    function dragMouseDown(e: MouseEvent) {
+      // If the target is the filter input, let it focus and return
+      if (
+        e.target instanceof HTMLElement &&
+        e.target.className === 'mb-2 p-1 border rounded w-full'
+      ) return
+      e.preventDefault()
+      // get the mouse cursor position at startup:
+      pos3 = e.clientX
+      pos4 = e.clientY
+      document.onmouseup = closeDragElement
+      // call a function whenever the cursor moves:
+      document.onmousemove = elementDrag
+    }
+
+    function elementDrag(e: MouseEvent) {
+      e = e || window.event
+      e.preventDefault()
+      // calculate the new cursor position:
+      pos1 = pos3 - e.clientX
+      pos2 = pos4 - e.clientY
+      pos3 = e.clientX
+      pos4 = e.clientY
+      // set the element's new position:
+      elmnt.style.top = elmnt.offsetTop - pos2 + 'px'
+      elmnt.style.left = elmnt.offsetLeft - pos1 + 'px'
+    }
+
+    function closeDragElement() {
+      // stop moving when mouse button is released:
+      document.onmouseup = null
+      document.onmousemove = null
+    }
+  }
   
   function Draggable({ x, y }: { x: number; y: number }) {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -323,7 +382,7 @@ export function ShadcnTable<TData, TValue>({
 
   return (
     <div className="p-2">
-      <DndContext
+      {/*       <DndContext
         onDragEnd={({ delta }) => {
           setPosition((currentPosition) => {
             const newX = currentPosition.x + delta.x
@@ -334,85 +393,56 @@ export function ShadcnTable<TData, TValue>({
         }}
       >
         <Draggable x={position.x} y={position.y} />
-      </DndContext>
+      </DndContext> */}
 
-        {/* columns dialog */}
-        <div
-          className={cn(
-            "fixed top-[100px] left-[100px] bg-white shadow-lg z-50 p-4 rounded",
-            !openColumnsDialog && "hidden"
-          )}
-        >
-          <div className="py-4 flex items-center justify-between">
-            <span>Choose columns</span>
-            <button
-              className="ml-auto px-2 py-1 text-gray-500 hover:text-gray-700"
-              onClick={() => setOpenColumnsDialog(false)}
-            >
-              X
-            </button>
-          </div>
-          <input
-            placeholder="Filter columns..."
-            value={table.getState().globalFilter ?? ''}
-            onChange={(e) => table.setGlobalFilter?.(e.target.value)}
-            className="mb-2 p-1 border rounded w-full"
-          />
-          <div className="max-h-[300px] w-64 overflow-y-auto">
-            {table
-              .getAllColumns()
-              .filter((column: Column<any, unknown>) => {
-          const keyword =
-            table.getState().globalFilter?.toLowerCase() || ''
-          return (
-            column.getCanHide() &&
-            column.id.toLowerCase().includes(keyword)
-          )
-              })
-              .map((column: Column<any, unknown>) => {
-          return (
-            <span key={column.id} className="p-2 block">
-              <input
-                type="checkbox"
-                className='mr-2'
-                checked={column.getIsVisible()}
-                onChange={() => column.toggleVisibility()}
-              />
-              {column.id}
-            </span>
-          )
-              })}
-          </div>
+      {/* columns dialog */}
+      <div
+        id="columns-dialog"
+        className={cn(
+          'fixed top-[100px] left-[100px] bg-white shadow-lg z-50 p-4 rounded',
+          !openColumnsDialog && 'hidden'
+        )}
+      >
+        <div className="py-4 flex items-center justify-between">
+          <span>Choose columns</span>
+          <button
+            className="ml-auto px-2 py-1 text-gray-500 hover:text-gray-700"
+            onClick={() => setOpenColumnsDialog(false)}
+          >
+            X
+          </button>
         </div>
- 
-      <div className="flex items-center py-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
+        <input
+          placeholder="Filter columns..."
+          value={table.getState().globalFilter ?? ''}
+          onChange={(e) => table.setGlobalFilter?.(e.target.value)}
+          className="mb-2 p-1 border rounded w-full"
+        />
+        <div className="max-h-[300px] w-64 overflow-y-auto">
+          {table
+            .getAllColumns()
+            .filter((column: Column<any, unknown>) => {
+              const keyword = table.getState().globalFilter?.toLowerCase() || ''
+              return (
+                column.getCanHide() && column.id.toLowerCase().includes(keyword)
+              )
+            })
+            .map((column: Column<any, unknown>) => {
+              return (
+                <span key={column.id} className="p-2 block">
+                  <input
+                    type="checkbox"
+                    className="mr-2"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                    onChange={() => column.toggleVisibility()}
+                  />
+                  {column.id}
+                </span>
+              )
+            })}
+        </div>
       </div>
+
       <div className="h-2" />
       <DndContext
         collisionDetection={closestCenter}
