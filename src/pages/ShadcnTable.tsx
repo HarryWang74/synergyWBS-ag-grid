@@ -294,43 +294,34 @@ export function ShadcnTable<TData, TValue>({
 
   return (
     <div className="p-2">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">Edit Profile</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Column List</DialogTitle>
-            <DialogDescription>
-              <input
-              placeholder="Filter columns..."
-              value={table.getState().globalFilter ?? ""}
-              onChange={e => table.setGlobalFilter?.(e.target.value)}
-              className="mb-2 p-1 border rounded w-full"
-              />
-              {
-              table
-                .getAllColumns()
-                .filter((column: Column<any, unknown>) => {
-                const keyword = table.getState().globalFilter?.toLowerCase() || "";
-                return column.getCanHide() && column.id.toLowerCase().includes(keyword);
-                })
-                .map((column: Column<any, unknown>) => {
-                return (
-                  <span key={column.id} className="p-2 block">
-                  <input
-                    type="checkbox"
-                    checked={column.getIsVisible()}
-                    onChange={() => column.toggleVisibility()}
-                  />
-                  {column.id}
-                  </span>
-                )
-                })}
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+      <div
+        className="fixed top-[100px] left-[100px] bg-white shadow-lg max-h-[300px] w-64 overflow-y-auto z-50 p-4 rounded"
+      >
+        <input
+          placeholder="Filter columns..."
+          value={table.getState().globalFilter ?? ""}
+          onChange={e => table.setGlobalFilter?.(e.target.value)}
+          className="mb-2 p-1 border rounded w-full"
+        />
+        {table
+          .getAllColumns()
+          .filter((column: Column<any, unknown>) => {
+        const keyword = table.getState().globalFilter?.toLowerCase() || "";
+        return column.getCanHide() && column.id.toLowerCase().includes(keyword);
+          })
+          .map((column: Column<any, unknown>) => {
+        return (
+          <span key={column.id} className="p-2 block">
+            <input
+          type="checkbox"
+          checked={column.getIsVisible()}
+          onChange={() => column.toggleVisibility()}
+            />
+            {column.id}
+          </span>
+        );
+          })}
+      </div>
       <div className="flex items-center py-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
