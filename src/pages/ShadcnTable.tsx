@@ -125,8 +125,7 @@ const TableHeaderWapper = ({
     width: header.column.getSize(),
     zIndex: isDragging ? 1 : 0,
   }
-  const [openColumnsDialog, setOpenColumnsDialog] =
-    React.useState<boolean>(false)
+  
 
   return (
     <TableHead
@@ -206,7 +205,7 @@ const TableHeaderWapper = ({
                 Reset Columns
                 </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setOpenColumnsDialog(true)}>
+              <DropdownMenuItem>
                 <RiResetLeftLine />
                 Choose Columns
               </DropdownMenuItem>
@@ -246,7 +245,8 @@ export function ShadcnTable<TData, TValue>({
   )
   //manage your own row selection state
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
-  
+  const [openColumnsDialog, setOpenColumnsDialog] =
+    React.useState<boolean>(true)
   React.useEffect(() => {
     onRowSelectChange?.(rowSelection)
   }, [rowSelection])
@@ -294,34 +294,37 @@ export function ShadcnTable<TData, TValue>({
 
   return (
     <div className="p-2">
-      <div
-        className="fixed top-[100px] left-[100px] bg-white shadow-lg max-h-[300px] w-64 overflow-y-auto z-50 p-4 rounded"
-      >
-        <input
-          placeholder="Filter columns..."
-          value={table.getState().globalFilter ?? ""}
-          onChange={e => table.setGlobalFilter?.(e.target.value)}
-          className="mb-2 p-1 border rounded w-full"
-        />
-        {table
-          .getAllColumns()
-          .filter((column: Column<any, unknown>) => {
-        const keyword = table.getState().globalFilter?.toLowerCase() || "";
-        return column.getCanHide() && column.id.toLowerCase().includes(keyword);
-          })
-          .map((column: Column<any, unknown>) => {
-        return (
-          <span key={column.id} className="p-2 block">
-            <input
-          type="checkbox"
-          checked={column.getIsVisible()}
-          onChange={() => column.toggleVisibility()}
-            />
-            {column.id}
-          </span>
-        );
-          })}
-      </div>
+      {openColumnsDialog && (
+        <div className="fixed top-[100px] left-[100px] bg-white shadow-lg max-h-[300px] w-64 overflow-y-auto z-50 p-4 rounded">
+          <input
+            placeholder="Filter columns..."
+            value={table.getState().globalFilter ?? ''}
+            onChange={(e) => table.setGlobalFilter?.(e.target.value)}
+            className="mb-2 p-1 border rounded w-full"
+          />
+          {table
+            .getAllColumns()
+            .filter((column: Column<any, unknown>) => {
+              const keyword = table.getState().globalFilter?.toLowerCase() || ''
+              return (
+                column.getCanHide() && column.id.toLowerCase().includes(keyword)
+              )
+            })
+            .map((column: Column<any, unknown>) => {
+              return (
+                <span key={column.id} className="p-2 block">
+                  <input
+                    type="checkbox"
+                    checked={column.getIsVisible()}
+                    onChange={() => column.toggleVisibility()}
+                  />
+                  {column.id}
+                </span>
+              )
+            })}
+        </div>
+      )}
+
       <div className="flex items-center py-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
