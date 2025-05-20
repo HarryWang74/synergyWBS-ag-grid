@@ -16,6 +16,7 @@ import {
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { HiMiniEllipsisVertical } from 'react-icons/hi2'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const cultureCode = 'en-GB'
 const currencyCode = 'GBP'
@@ -105,6 +106,7 @@ function ProjectBreakdown() {
 
   const saveRowDataName = (rowData: any, name: string) => {
     console.log('saveRowData', rowData, name)
+    rowData.progressing = true
   }
 
 
@@ -176,22 +178,26 @@ function ProjectBreakdown() {
         id: 'name',
         size: 180,
         cell: ({ row }) => {
+          const rowData = row.original
           const [nameValue, setNameValue] = React.useState(row.original.name)
           return (
-            <input
-              type="text"
-              value={nameValue}
-              onChange={(e) => {
-                setNameValue(e.target.value)
-              }}
-              onBlur={() => saveRowDataName(row.original, nameValue)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  saveRowDataName(row.original, nameValue)
-                  e.currentTarget.blur()
-                }
-              }}
-            />
+            !rowData.progressing ? (
+              <input
+                type="text"
+                value={nameValue}
+                onChange={(e) => {
+                  setNameValue(e.target.value)
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    saveRowDataName(row.original, nameValue)
+                    e.currentTarget.blur()
+                  }
+                }}
+              />
+            ) : (
+              <Skeleton className="h-4 w-[250px]" />
+            )
           )
         },
       },
