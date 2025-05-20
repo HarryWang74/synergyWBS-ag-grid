@@ -8,6 +8,7 @@ import {
   DataTableDemo,
   Drag,
   ProjectBreakdown,
+  EnhancedWBSTable,
 } from './pages'
 
 const router = createBrowserRouter([
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: 'drag/',
         element: <Drag />,
+      },
+      {
+        path: 'enhanced-table/',
+        element: <EnhancedWBSTable />,
       },
     ],
   },

@@ -34,6 +34,15 @@ const Navbar = () => {
         >
           Shadcn Table Solution
         </NavLink>
+        <NavLink
+          to="/enhanced-table"
+          className={({ isActive }) =>
+            (isActive ? 'text-i-primary' : '') +
+            ' inline-block p-4 hover:bg-i-hover-color'
+          }
+        >
+          Enhanced WBS Table
+        </NavLink>
  {/*        <NavLink
           to="/demo"
           className={({ isActive }) =>
