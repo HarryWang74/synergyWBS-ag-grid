@@ -125,6 +125,10 @@ function ProjectBreakdown() {
     console.log('saveRowStatus', rowData, status)
   }
 
+  const saveRowUnits = (rowData: any, units: number) => {
+    console.log('saveRowStatus', rowData, units)
+  }
+
 
   
   const columns = React.useMemo<ColumnDef<any>[]>(
@@ -316,6 +320,29 @@ function ProjectBreakdown() {
         header: () => 'Units',
         id: 'units',
         size: 180,
+        cell: ({ row }: { row: any }) => {
+          const rowData = row.original
+          const [unitsValue, setUnitsValue] = React.useState(row.original.units)
+          return (
+            !rowData.progressing ? (
+              <input
+                type="number"
+                value={unitsValue}
+                onChange={(e) => {
+                  setUnitsValue(e.target.value)
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    saveRowUnits(row.original, unitsValue)
+                    e.currentTarget.blur()
+                  }
+                }}
+              />
+            ) : (
+              <Skeleton className="h-4 w-[250px]" />
+            )
+          )
+        }
       },
       {
         accessorKey: 'rate',

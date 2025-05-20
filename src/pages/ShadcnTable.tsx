@@ -483,22 +483,29 @@ export function ShadcnTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows.map((row) => {
               return (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  onDoubleClick={() => {
+                    // Handle double click event here
+                    console.log('Row double clicked:', row.original)
+                    console.log("table", table.options)
+                  }}
+                >
                   {row.getVisibleCells().map((cell) => {
-                    const { column } = cell
-                    return (
-                      <TableCell
-                        className="bg-white"
-                        key={cell.id}
-                        //IMPORTANT: pin feature!
-                        style={{ ...getPinStyles(column) }}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    )
+                  const { column } = cell
+                  return (
+                    <TableCell
+                    className="bg-white"
+                    key={cell.id}
+                    //IMPORTANT: pin feature!
+                    style={{ ...getPinStyles(column) }}
+                    >
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext()
+                    )}
+                    </TableCell>
+                  )
                   })}
                 </TableRow>
               )
