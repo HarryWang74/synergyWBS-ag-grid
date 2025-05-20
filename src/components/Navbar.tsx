@@ -8,7 +8,7 @@ const Navbar = () => {
       </NavLink>
       <div className="border-b border-i-border-color">
         <NavLink
-          to="/"
+          to="/onetable"
           className={({ isActive }) =>
             (isActive ? 'text-i-primary' : '') +
             ' inline-block p-4 hover:bg-i-hover-color'
@@ -26,7 +26,7 @@ const Navbar = () => {
           Ag-grid Multi Table Solution
         </NavLink>
         <NavLink
-          to="/shadcn"
+          to="/"
           className={({ isActive }) =>
             (isActive ? 'text-i-primary' : '') +
             ' inline-block p-4 hover:bg-i-hover-color'

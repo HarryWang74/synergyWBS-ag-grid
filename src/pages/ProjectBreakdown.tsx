@@ -43,6 +43,7 @@ function ProjectBreakdown() {
   const [selectedStages, setSelectedStages] = React.useState<any[]>([])
   const [selectedPhases, setSelectedPhases] = React.useState<any[]>([])
   const storageKey = 'projectBreakdownTableStatus'
+  
   const initialState = (() => {
     const stored = localStorage.getItem(storageKey)
 
@@ -69,6 +70,7 @@ function ProjectBreakdown() {
           },
         }
   })()
+  
   const delTableStatus = () => {
     localStorage.removeItem(storageKey)
   }
@@ -101,6 +103,11 @@ function ProjectBreakdown() {
     )
   }
 
+  const saveRowDataName = (rowData: any, name: string) => {
+    console.log('saveRowData', rowData, name)
+  }
+
+
   
   const columns = React.useMemo<ColumnDef<any>[]>(
     () => [
@@ -130,8 +137,8 @@ function ProjectBreakdown() {
       },
       {
         accessorKey: 'wbs',
-        id: 'wbs', // must have to support drag & drop
-        header: ({}) => <>WBS</>,
+        id: 'wbs',
+        header: () => 'WBS',
         cell: ({ row, getValue }) => (
           <div
             style={{
@@ -168,6 +175,25 @@ function ProjectBreakdown() {
         header: () => 'Name',
         id: 'name',
         size: 180,
+        cell: ({ row }) => {
+          const [nameValue, setNameValue] = React.useState(row.original.name)
+          return (
+            <input
+              type="text"
+              value={nameValue}
+              onChange={(e) => {
+                setNameValue(e.target.value)
+              }}
+              onBlur={() => saveRowDataName(row.original, nameValue)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  saveRowDataName(row.original, nameValue)
+                  e.currentTarget.blur()
+                }
+              }}
+            />
+          )
+        },
       },
       {
         accessorKey: 'status',
@@ -344,7 +370,7 @@ function ProjectBreakdown() {
     <div>
       <div className="border-b border-i-border-color my-4">
         <h1>Project breakdown</h1>
-        <div className="my-4">
+{/*         <div className="my-4">
           <b>selected phases</b>
           {JSON.stringify(selectedPhases, null, 2)}
         </div>
@@ -355,7 +381,7 @@ function ProjectBreakdown() {
         <div className="my-4">
           <b>selected tasks</b>
           {JSON.stringify(selectedTasks, null, 2)}
-        </div>
+        </div> */}
       </div>
       <ShadcnTable
         columns={columns}
