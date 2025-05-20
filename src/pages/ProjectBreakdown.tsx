@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button'
 import { HiMiniEllipsisVertical } from 'react-icons/hi2'
 import { Skeleton } from '@/components/ui/skeleton'
 
+
 const cultureCode = 'en-GB'
 const currencyCode = 'GBP'
 /* const cultureCode = 'en-US'
@@ -106,6 +107,11 @@ function ProjectBreakdown() {
 
   const saveRowDataName = (rowData: any, name: string) => {
     console.log('saveRowData', rowData, name)
+    rowData.progressing = true
+  }
+
+  const saveRowDataStartDate = (rowData: any, startDate: Date) => {
+    console.log('saveRowDataStartDate', rowData, startDate)
     rowData.progressing = true
   }
 
@@ -209,7 +215,20 @@ function ProjectBreakdown() {
       },
       {
         accessorKey: 'startDate',
-        cell: ({ getValue }) => formatDate(getValue<Date>() ?? new Date()),
+        cell: ({row}) => {
+          const rowData = row.original
+          const [date, setDate] = React.useState<Date>(rowData.startDate || new Date())
+          return (
+            <input
+              type="date"
+              value={date ? date.toISOString().split('T')[0] : ''}
+              onChange={e => {
+                const newDate = e.target.value ? new Date(e.target.value) : new Date();
+                setDate(newDate);
+              }}
+            />
+          )
+        },
         header: () => 'Start Date',
         id: 'startDate',
         size: 180,
@@ -374,9 +393,9 @@ function ProjectBreakdown() {
 
   return (
     <div>
-      <div className="border-b border-i-border-color my-4">
+      {/* <div className="border-b border-i-border-color my-4">
         <h1>Project breakdown</h1>
-{/*         <div className="my-4">
+        <div className="my-4">
           <b>selected phases</b>
           {JSON.stringify(selectedPhases, null, 2)}
         </div>
@@ -387,8 +406,8 @@ function ProjectBreakdown() {
         <div className="my-4">
           <b>selected tasks</b>
           {JSON.stringify(selectedTasks, null, 2)}
-        </div> */}
-      </div>
+        </div>
+      </div> */}
       <ShadcnTable
         columns={columns}
         data={data}
