@@ -10,7 +10,7 @@ export function getData() {
         {
           wbs: '1.1',
           name: 'Stage 1',
-          status: 'Active',
+          status: { id: 2, name: 'In progress' },
           startDate: new Date(),
           endDate: new Date(),
           assigned: 'Staff A',
@@ -27,7 +27,7 @@ export function getData() {
             {
               wbs: '1.1.1',
               name: 'Task 1',
-              status: 'Completed',
+              status: { id: 2, name: 'In progress' },
               startDate: new Date(),
               endDate: new Date(),
               assigned: 'Staff A',
@@ -38,7 +38,7 @@ export function getData() {
             {
               wbs: '1.1.2',
               name: 'Task 2',
-              status: 'Completed',
+              status: { id: 2, name: 'In progress' },
               startDate: new Date(),
               endDate: new Date(),
               assigned: 'Staff A',
@@ -68,7 +68,7 @@ export function getData() {
             {
               wbs: '1.2.1',
               name: 'Task 3',
-              status: 'Completed',
+              status: { id: 1, name: 'Not started' },
               startDate: new Date(),
               endDate: new Date(),
               assigned: 'Staff B',

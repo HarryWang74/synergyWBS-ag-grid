@@ -40,6 +40,12 @@ const formatDate = (date: Date) => {
   }).format(date)
 }
 
+export const wbsRowStatus = [
+  { id: 1, name: 'Not started' },
+  { id: 2, name: 'In progress' },
+  { id: 3, name: 'Completed' },
+]
+
 function ProjectBreakdown() {
   const [selectedTasks, setSelectedTasks] = React.useState<any[]>([])
   const [selectedStages, setSelectedStages] = React.useState<any[]>([])
@@ -105,14 +111,18 @@ function ProjectBreakdown() {
     )
   }
 
-  const saveRowDataName = (rowData: any, name: string) => {
+  const saveRowName = (rowData: any, name: string) => {
     console.log('saveRowData', rowData, name)
     rowData.progressing = true
   }
 
-  const saveRowDataStartDate = (rowData: any, startDate: Date) => {
+  const saveRowStartDate = (rowData: any, startDate: Date) => {
     console.log('saveRowDataStartDate', rowData, startDate)
     rowData.progressing = true
+  }
+
+  const saveRowStatus = (rowData: any, status: any) => {
+    console.log('saveRowStatus', rowData, status)
   }
 
 
@@ -196,7 +206,7 @@ function ProjectBreakdown() {
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    saveRowDataName(row.original, nameValue)
+                    saveRowName(row.original, nameValue)
                     e.currentTarget.blur()
                   }
                 }}
@@ -211,20 +221,56 @@ function ProjectBreakdown() {
         accessorKey: 'status',
         header: () => 'Status',
         id: 'status',
+        cell: ({row}) => {
+          const rowData = row.original
+          return (
+            rowData.status && (
+              <select onChange={
+                (e) => {
+                  const selectedStatus = wbsRowStatus.find(
+                    (status) => status.name === e.target.value
+                  )
+                  if (selectedStatus) {
+                    saveRowStatus(row.original, selectedStatus)
+                  }
+                }
+              }>
+                {wbsRowStatus.map((status) => (
+                  <option 
+                    key={status.id} 
+                    value={status.name} selected={rowData.status.id === status.id}
+                  >
+
+                    {status.name}
+                  </option>
+                ))}
+              </select>
+            )
+          )
+        },
         size: 180,
       },
       {
         accessorKey: 'startDate',
         cell: ({row}) => {
           const rowData = row.original
-          const [date, setDate] = React.useState<Date>(rowData.startDate || new Date())
+          const [projectStartDate, setProjectStartDate] = React.useState<Date>(
+            rowData.startDate || new Date()
+          )
           return (
             <input
               type="date"
-              value={date ? date.toISOString().split('T')[0] : ''}
-              onChange={e => {
-                const newDate = e.target.value ? new Date(e.target.value) : new Date();
-                setDate(newDate);
+              value={
+                projectStartDate
+                  ? projectStartDate.toISOString().split('T')[0]
+                  : ''
+              }
+              onChange={(e) => {
+                const newDate = e.target.value
+                  ? new Date(e.target.value)
+                  : new Date()
+                  setProjectStartDate(newDate)
+                saveRowStartDate(row.original, newDate)
               }}
             />
           )
@@ -244,16 +290,18 @@ function ProjectBreakdown() {
         accessorKey: 'assigned',
         header: () => 'Assigned',
         id: 'assigned',
-        cell: ({ getValue }) => {
-          const assignee = getValue<any>()
+        cell: ({ row }) => {
+          const rowData = row.original
           return (
-            <div className="flex items-center gap-2">
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <span>{assignee}</span>
-            </div>
+            rowData.type !== 'phase' && (
+              <div className="flex items-center gap-2">
+                <Avatar>
+                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <span>{rowData.assigned}</span>
+              </div>
+            )
           )
         },
       },
