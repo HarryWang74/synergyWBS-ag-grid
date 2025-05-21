@@ -508,7 +508,7 @@ function RecursiveRow({
       
       {/* Render child rows recursively if expanded */}
       {row.getIsExpanded() &&
-        row.getRowModel().rows.map((subRow) => (
+        row.subRows?.map((subRow: Row<Task>) => (
           <RecursiveRow
             key={subRow.id}
             row={subRow}
@@ -958,7 +958,12 @@ export function EnhancedWBSTable() {
 
   // Expand/collapse all rows
   const toggleExpandAll = () => {
-    setExpanded(prev => typeof prev === 'boolean' ? !prev : true);
+    setExpanded(prev => {
+      // If prev is true, return empty object (collapsed)
+      // If prev is false or empty object, return true (expanded)
+      if (prev === true) return {};
+      return true;
+    });
   };
 
   return (
