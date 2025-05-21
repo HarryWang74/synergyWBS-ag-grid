@@ -319,7 +319,7 @@ function ProjectBreakdown() {
         cell: ({ row }: { row: any }) => {
           const rowData = row.original
           const [unitsValue, setUnitsValue] = React.useState(row.original.units)
-          return !rowData.progressing ? (
+          return  (
             <input
               type="number"
               value={unitsValue}
@@ -333,8 +333,6 @@ function ProjectBreakdown() {
                 }
               }}
             />
-          ) : (
-            <Skeleton className="h-4 w-[250px]" />
           )
         },
       },
