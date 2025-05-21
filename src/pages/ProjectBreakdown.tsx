@@ -10,7 +10,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal } from 'lucide-react'
@@ -113,7 +112,6 @@ function ProjectBreakdown() {
 
   const saveRowName = (rowData: any, name: string) => {
     console.log('saveRowData', rowData, name)
-    rowData.progressing = true
   }
 
   const saveRowStartDate = (rowData: any, startDate: Date) => {
@@ -201,23 +199,19 @@ function ProjectBreakdown() {
           const rowData = row.original
           const [nameValue, setNameValue] = React.useState(row.original.name)
           return (
-            !rowData.progressing ? (
-              <input
-                type="text"
-                value={nameValue}
-                onChange={(e) => {
-                  setNameValue(e.target.value)
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    saveRowName(row.original, nameValue)
-                    e.currentTarget.blur()
-                  }
-                }}
-              />
-            ) : (
-              <Skeleton className="h-4 w-[250px]" />
-            )
+            <input
+              type="text"
+              value={nameValue}
+              onChange={(e) => {
+                setNameValue(e.target.value)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  saveRowName(row.original, nameValue)
+                  e.currentTarget.blur()
+                }
+              }}
+            />
           )
         },
       },
