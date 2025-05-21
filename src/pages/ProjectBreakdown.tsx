@@ -235,7 +235,7 @@ function ProjectBreakdown() {
                   type="text"
                   value={nameValue}
                   autoFocus
-                  className="w-full border rounded px-2 py-1"
+                  className="w-full border border-blue-500 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-400"
                   onChange={(e) => setNameValue(e.target.value)}
                   onBlur={() => {
                     saveRowName(rowData, nameValue)
