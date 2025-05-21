@@ -229,7 +229,6 @@ interface DataTableProps<TData, TValue> {
   pathSubRows?: string
   initialState?: TableStatus
   onRowSelectChange?: (rowSelectionState: RowSelectionState) => void
-  onRowEditingChange?: (rowId: string) => void
 }
 
 
@@ -241,7 +240,6 @@ export function ShadcnTable<TData, TValue>({
   pathSubRows,
   initialState,
   onRowSelectChange,
-  onRowEditingChange,
 }: DataTableProps<TData, TValue>) {
   const [expanded, setExpanded] = React.useState<ExpandedState>(true)
   const [columnOrder, setColumnOrder] = React.useState<string[]>(() =>
@@ -281,12 +279,6 @@ export function ShadcnTable<TData, TValue>({
     getRowId: (row) => row.id,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    onRowEditingChange: onRowEditingChange, // Pass along the editing change callback
-    meta: {
-      updateData: (rowIndex: number, columnId: string, value: unknown) => {
-        console.log('updateData', rowIndex, columnId, value);
-      },
-    },
   })
 
   // reorder columns after drag & drop
@@ -493,47 +485,10 @@ export function ShadcnTable<TData, TValue>({
               return (
                 <TableRow
                   key={row.id}
-                  className="transition-colors hover:bg-gray-50"
-                  data-state={row.getIsSelected() ? "selected" : undefined}
                   onDoubleClick={() => {
-                    // Identify the row data
-                    const rowData = row.original as any;
-                    
-                    // Find the original data in the flat data array to set editing mode
-                    const findAndUpdateRow = (items: any[]): boolean => {
-                      for (const item of items) {
-                        if (item.id === rowData.id) {
-                          item._isEditing = true;
-                          return true;
-                        }
-                        
-                        // Check subRows if any
-                        if (item.subRows && item.subRows.length > 0) {
-                          if (findAndUpdateRow(item.subRows)) {
-                            return true;
-                          }
-                        }
-                      }
-                      return false;
-                    };
-                    
-                    // Clone data to trigger re-render
-                    const sourceData = table.options.data as any[];
-                    const newData = JSON.parse(JSON.stringify(sourceData));
-                    
-                    // Update the data
-                    findAndUpdateRow(newData);
-                    
-                    // Reset the component's data to force re-render
-                    if (table.options.onRowEditingChange) {
-                      table.options.onRowEditingChange(rowData.id);
-                    }
-                    
-                    // Force update by re-dispatching state change
-                    row.toggleSelected();
-                    row.toggleSelected();
-                    
-                    console.log('Row double clicked, enabling edit mode for:', rowData.id);
+                    // Handle double click event here
+                    console.log('Row double clicked:', row.original)
+                    console.log("table", table.options)
                   }}
                 >
                   {row.getVisibleCells().map((cell) => {
