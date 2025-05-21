@@ -34,7 +34,7 @@ const Navbar = () => {
         >
           Shadcn Table Solution
         </NavLink>
-        <NavLink
+{/*         <NavLink
           to="/enhanced-table"
           className={({ isActive }) =>
             (isActive ? 'text-i-primary' : '') +
@@ -42,7 +42,7 @@ const Navbar = () => {
           }
         >
           Enhanced WBS Table
-        </NavLink>
+        </NavLink> */}
  {/*        <NavLink
           to="/demo"
           className={({ isActive }) =>
