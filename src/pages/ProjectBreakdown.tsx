@@ -111,7 +111,27 @@ function ProjectBreakdown() {
   }
 
   const saveRowName = (rowData: any, name: string) => {
-    console.log('saveRowData', rowData, name)
+    console.log('saveRowData', rowData, name);
+    
+    // Update the data in our state
+    const newData = [...data];
+    const updateRow = (items: any[]) => {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].id === rowData.id) {
+          items[i].name = name;
+          items[i]._isEditing = false;
+          return true;
+        }
+        
+        if (items[i].subRows && items[i].subRows.length > 0) {
+          if (updateRow(items[i].subRows)) return true;
+        }
+      }
+      return false;
+    };
+    
+    updateRow(newData);
+    setData(newData);
   }
 
   const saveRowStartDate = (rowData: any, startDate: Date) => {
@@ -196,23 +216,47 @@ function ProjectBreakdown() {
         id: 'name',
         size: 180,
         cell: ({ row }) => {
-          const rowData = row.original
-          const [nameValue, setNameValue] = React.useState(row.original.name)
-          return (
-            <input
-              type="text"
-              value={nameValue}
-              onChange={(e) => {
-                setNameValue(e.target.value)
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  saveRowName(row.original, nameValue)
-                  e.currentTarget.blur()
-                }
-              }}
-            />
-          )
+          const rowData = row.original;
+          const [nameValue, setNameValue] = React.useState(row.original.name);
+          
+          // Check if this row is in edit mode
+          const isEditing = rowData._isEditing === true;
+          
+          // On value change
+          React.useEffect(() => {
+            setNameValue(row.original.name);
+          }, [row.original.name]);
+          
+          // Show input when in edit mode, otherwise show plain text
+          if (isEditing) {
+            return (
+              <>
+                <input
+                  type="text"
+                  value={nameValue}
+                  autoFocus
+                  className="w-full border rounded px-2 py-1"
+                  onChange={(e) => setNameValue(e.target.value)}
+                  onBlur={() => {
+                    saveRowName(rowData, nameValue)
+                    rowData._isEditing = false
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      saveRowName(rowData, nameValue)
+                      rowData._isEditing = false
+                    } else if (e.key === 'Escape') {
+                      setNameValue(row.original.name)
+                      rowData._isEditing = false
+                    }
+                  }}
+                />
+              </>
+            )
+          }
+          
+          // Default read-only view
+          return <div className="truncate">{rowData.name}</div>;
         },
       },
       {
@@ -458,6 +502,35 @@ function ProjectBreakdown() {
       );
     setSelectedTasks(selectedTaskData)
   }
+  
+  // Handle row editing state change (double-click)
+  const onRowEditingChange = (rowId: string) => {
+    console.log('Row edit mode changed for:', rowId);
+    
+    // Find and update the row in our data
+    const findAndUpdateRow = (items: any[]): boolean => {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].id === rowId) {
+          items[i]._isEditing = true;
+          return true;
+        }
+        
+        if (items[i].subRows && items[i].subRows.length > 0) {
+          if (findAndUpdateRow(items[i].subRows)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+    
+    // Clone data to avoid direct mutation
+    const newData = [...data];
+    findAndUpdateRow(newData);
+    
+    // Update state to trigger re-render
+    setData(newData);
+  }
 
 
   return (
@@ -483,6 +556,7 @@ function ProjectBreakdown() {
         pathSubRows="subRows"
         initialState={initialState}
         onRowSelectChange={onRowSelectChange}
+        onRowEditingChange={onRowEditingChange}
       />
     </div>
   )
