@@ -36,10 +36,10 @@ const router = createBrowserRouter([
         path: 'drag/',
         element: <Drag />,
       },
-      {
+/*       {
         path: 'enhanced-table/',
         element: <EnhancedWBSTable />,
-      },
+      }, */
     ],
   },
 ])
