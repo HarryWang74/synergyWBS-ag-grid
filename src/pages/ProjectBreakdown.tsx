@@ -119,6 +119,11 @@ function ProjectBreakdown() {
     rowData.progressing = true
   }
 
+  const saveRowEndDate = (rowData: any, startDate: Date) => {
+    console.log('saveRowDataStartDate', rowData, startDate)
+    rowData.progressing = true
+  }
+
   const saveRowStatus = (rowData: any, status: any) => {
     console.log('saveRowStatus', rowData, status)
   }
@@ -219,26 +224,26 @@ function ProjectBreakdown() {
         accessorKey: 'status',
         header: () => 'Status',
         id: 'status',
-        cell: ({row}) => {
+        cell: ({ row }) => {
           const rowData = row.original
           return (
             rowData.status && (
-              <select onChange={
-                (e) => {
+              <select
+                onChange={(e) => {
                   const selectedStatus = wbsRowStatus.find(
                     (status) => status.name === e.target.value
                   )
                   if (selectedStatus) {
                     saveRowStatus(row.original, selectedStatus)
                   }
-                }
-              }>
+                }}
+              >
                 {wbsRowStatus.map((status) => (
-                  <option 
-                    key={status.id} 
-                    value={status.name} selected={rowData.status.id === status.id}
+                  <option
+                    key={status.id}
+                    value={status.name}
+                    selected={rowData.status.id === status.id}
                   >
-
                     {status.name}
                   </option>
                 ))}
@@ -250,7 +255,7 @@ function ProjectBreakdown() {
       },
       {
         accessorKey: 'startDate',
-        cell: ({row}) => {
+        cell: ({ row }) => {
           const rowData = row.original
           const [projectStartDate, setProjectStartDate] = React.useState<Date>(
             rowData.startDate || new Date()
@@ -267,7 +272,7 @@ function ProjectBreakdown() {
                 const newDate = e.target.value
                   ? new Date(e.target.value)
                   : new Date()
-                  setProjectStartDate(newDate)
+                setProjectStartDate(newDate)
                 saveRowStartDate(row.original, newDate)
               }}
             />
@@ -279,10 +284,59 @@ function ProjectBreakdown() {
       },
       {
         accessorKey: 'endDate',
-        cell: ({ getValue }) => formatDate(getValue<Date>() ?? new Date()),
+        cell: ({ row }) => {
+          const rowData = row.original
+          const [projectStartDate, setProjectEndDate] = React.useState<Date>(
+            rowData.startDate || new Date()
+          )
+          return (
+            <input
+              type="date"
+              value={
+                projectStartDate
+                  ? projectStartDate.toISOString().split('T')[0]
+                  : ''
+              }
+              onChange={(e) => {
+                const newDate = e.target.value
+                  ? new Date(e.target.value)
+                  : new Date()
+                setProjectEndDate(newDate)
+                saveRowEndDate(row.original, newDate)
+              }}
+            />
+          )
+        },
         header: () => 'End Date',
         id: 'endDate',
         size: 180,
+      },
+      {
+        accessorKey: 'units',
+        header: () => 'Units',
+        id: 'units',
+        size: 180,
+        cell: ({ row }: { row: any }) => {
+          const rowData = row.original
+          const [unitsValue, setUnitsValue] = React.useState(row.original.units)
+          return !rowData.progressing ? (
+            <input
+              type="number"
+              value={unitsValue}
+              onChange={(e) => {
+                setUnitsValue(e.target.value)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  saveRowUnits(row.original, unitsValue)
+                  e.currentTarget.blur()
+                }
+              }}
+            />
+          ) : (
+            <Skeleton className="h-4 w-[250px]" />
+          )
+        },
       },
       {
         accessorKey: 'assigned',
@@ -309,35 +363,7 @@ function ProjectBreakdown() {
         id: 'discipline',
         size: 180,
       },
-      {
-        accessorKey: 'units',
-        header: () => 'Units',
-        id: 'units',
-        size: 180,
-        cell: ({ row }: { row: any }) => {
-          const rowData = row.original
-          const [unitsValue, setUnitsValue] = React.useState(row.original.units)
-          return (
-            !rowData.progressing ? (
-              <input
-                type="number"
-                value={unitsValue}
-                onChange={(e) => {
-                  setUnitsValue(e.target.value)
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    saveRowUnits(row.original, unitsValue)
-                    e.currentTarget.blur()
-                  }
-                }}
-              />
-            ) : (
-              <Skeleton className="h-4 w-[250px]" />
-            )
-          )
-        }
-      },
+
       {
         accessorKey: 'rate',
         cell: ({ getValue }) => formatCurrency(getValue<number>()),
